@@ -67,12 +67,11 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * @param sender the User ID of the sender in the email transaction.
-     * @param receiver the User ID of the receiver in the email transaction.
-     * @return the number of emails sent from the specified sender to the specified
-     * receiver in this UDWInteractionGraph.
+     * @param user1 the User ID of the first user.
+     * @param user2 the User ID of the second user.
+     * @return the number of email interactions (send/receive) between user1 and user2
      */
-    public int getEmailCount(int sender, int receiver) {
+    public int getEmailCount(int user1, int user2) {
         // TODO: Implement this getter method
         return 0;
     }
