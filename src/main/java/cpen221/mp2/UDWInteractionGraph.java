@@ -59,7 +59,7 @@ public class UDWInteractionGraph {
 
     /**
      * @return a Set of Integers, where every element in the set is a User ID
-     * in this DWInteractionGraph.
+     * in this UDWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
         // TODO: Implement this getter method
@@ -70,7 +70,7 @@ public class UDWInteractionGraph {
      * @param sender the User ID of the sender in the email transaction.
      * @param receiver the User ID of the receiver in the email transaction.
      * @return the number of emails sent from the specified sender to the specified
-     * receiver in this DWInteractionGraph.
+     * receiver in this UDWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
         // TODO: Implement this getter method
