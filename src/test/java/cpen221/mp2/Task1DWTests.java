@@ -29,6 +29,7 @@ public class Task1DWTests {
 
     @Test
     public void test1GetUserIDsGraph1() {
+
         Set<Integer> expected = new HashSet<>(Arrays.asList(0, 1, 4, 8));
         Assertions.assertEquals(expected, dwig1.getUserIDs());
     }
