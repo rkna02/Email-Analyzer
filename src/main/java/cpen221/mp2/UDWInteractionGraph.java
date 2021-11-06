@@ -16,22 +16,96 @@ public class UDWInteractionGraph {
      *                 directory containing email interactions
      */
     public UDWInteractionGraph(String fileName) {
-        // TODO: Implement this constructor
+        try {
+            File transactions = new File(fileName);
+            Scanner fileReader = new Scanner(transactions);
+            UDWInteractions = new LinkedList[100];
+            while(fileReader.hasNextLine()) {
+                int sender = 0;
+                int receiver = 0;
+                int time = 0;
+                for (int i = 0; i < 3; i++) {
+                    switch (i) {
+                        case 0:
+                            sender = fileReader.nextInt();
+                            break;
+                        case 1:
+                            receiver = fileReader.nextInt();
+                            break;
+                        case 2:
+                            time = fileReader.nextInt();
+                            break;
+                    }
+                }
+                if (UDWInteractions[sender] == null) {
+                    UDWInteractions[sender] = new LinkedList<>();
+                }
+                if (UDWInteractions[receiver] == null) {
+                    UDWInteractions[receiver] = new LinkedList<>();
+                }
+                UDWInteractions[sender].addFirst(receiver);
+                UDWInteractions[receiver].addFirst(sender);
+            }
+            fileReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File cannot be read properly");
+        }
+
     }
 
+    private int numParticipants(File file) {
+        while(fileReader.hasNextLine())
+        return 1;
+    }
+    
     /**
-     * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
-     * and considering a time window filter.
+     * Creates a new UDWInteractionGraph using an email interaction file.
+     * The email interaction file will be in the resources directory.
      *
-     * @param inputUDWIG a UDWInteractionGraph object
+     * @param fileName the name of the file in the resources
+     *                 directory containing email interactions
      * @param timeFilter an integer array of length 2: [t0, t1]
      *                   where t0 <= t1. The created UDWInteractionGraph
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
      */
-    public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
-        // TODO: Implement this constructor
+    public UDWInteractionGraph(String fileName, int[] timeFilter) {
+        try {
+            File transactions = new File(fileName);
+            Scanner fileReader = new Scanner(transactions);
+            while (fileReader.hasNextLine()) {
+                int sender = 0;
+                int receiver = 0;
+                int time = timeFilter[0];
+                if (time > timeFilter[1]) {
+                    break;
+                }
+                for (int i = 0; i < 3; i++) {
+                    switch(i) {
+                        case 0:
+                            sender = fileReader.nextInt();
+                            break;
+                        case 1:
+                            receiver = fileReader.nextInt();
+                            break;
+                        case 2:
+                            time = fileReader.nextInt();
+                            break;
+                    }
+                }
+                System.out.println("oi");
+                if (time >= timeFilter[0]) {
+                    UDWInteractions[sender].addFirst(receiver);
+                    UDWInteractions[receiver].addFirst(sender);
+                }
+            }
+            fileReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File cannot be read properly");
+            e.printStackTrace();
+        }
+
     }
 
     /**
