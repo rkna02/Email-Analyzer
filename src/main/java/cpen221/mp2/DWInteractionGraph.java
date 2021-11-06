@@ -50,28 +50,24 @@ public class DWInteractionGraph {
     public DWInteractionGraph(String fileName, int[] timeWindow) {
         // TODO: Implement this constructor
 
-         List<Integer> sender = new ArrayList<>(); // a List of sender info
-         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
-         List<Integer> time = new ArrayList<>(); // a list of time info
-
-         List<Integer> realSender1 = new ArrayList<>();
-         List<Integer> realReceiver1 = new ArrayList<>();
-         List<Integer> realTime1 = new ArrayList<>();
-        
+        List<Integer> sender = new ArrayList<>(); // a List of sender info
+        List<Integer> receiver = new ArrayList<>(); // a list of receiver info
+        List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
+
         reader(fileName,Etext);
         helper(sender, receiver, time, Etext);
 
         // filter out senders and receivers who are not in the time window
         for(int i = 0; i < time.size(); i++){
             if(time.get(i)>= timeWindow[0] && time.get(i) <=timeWindow[1]){
-                realSender1.add(sender.get(i));
-                realReceiver1.add(receiver.get(i));
-                realTime1.add(time.get(i));
+                realSender.add(sender.get(i));
+                realReceiver.add(receiver.get(i));
+                realTime.add(time.get(i));
             }
         }
 
-        array1 = new int[realSender1.size()][realSender1.size()];
+        array1 = new int[realSender.size()][realSender.size()];
 
         for(int i_1 = 0; i_1 < array1.length; i_1++){
             for(int j_1 =0; j_1 <array1.length; j_1++){
@@ -80,15 +76,11 @@ public class DWInteractionGraph {
         }
 
         int count =0;
-        for(Integer i: realSender1){
-            array1[i][realReceiver1.get(count)] = 1;
+        for(Integer i: realSender){
+            array1[i][realReceiver.get(count)] = 1;
             count++;
         }
 
-
-        realSender = realSender1;
-        realReceiver = realReceiver1;
-        realTime = realTime1;
     }
 
      private void reader(String fileName, StringBuilder Etext){
@@ -155,55 +147,39 @@ public class DWInteractionGraph {
         List<Integer> sender = new ArrayList<>(); // a List of sender info
         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
         List<Integer> time = new ArrayList<>(); // a list of time info
-
-        List<Integer> realSender1 = new ArrayList<>();
-        List<Integer> realReceiver1 = new ArrayList<>();
-        List<Integer> realTime1 = new ArrayList<>();
-
         StringBuilder Etext = new StringBuilder();
+
+
+
         // use a 2-d array to represent this object as adjacency matrix
         reader(fileName , Etext); // Etext is a string and it will be read and
         //xx is an arraylist with elements of string that rep integers
         helper(sender, receiver, time, Etext);
 
-        realSender1 = new ArrayList<>(sender);
-        realReceiver1 = new ArrayList<>(receiver);
-        realTime1 = new ArrayList<>(time);
+        realSender = new ArrayList<>(sender);
+        realReceiver = new ArrayList<>(receiver);
+        realTime = new ArrayList<>(time);
 
         // find the largest user ID
-
         int maxsize=0;
-        for(int ll=0; ll<realSender1.size(); ll++){
-            if(maxsize<realSender1.get(ll)){
-                maxsize = realSender1.get(ll);
+        for(int ll=0; ll<realSender.size(); ll++){
+            if(maxsize<realSender.get(ll)){
+                maxsize = realSender.get(ll);
             }
         }
-        for(int ll1=0; ll1<realReceiver1.size(); ll1++){
-            if(maxsize<realReceiver1.get(ll1)){
-                maxsize = realReceiver1.get(ll1);
+        for(int ll1=0; ll1<realReceiver.size(); ll1++){
+            if(maxsize<realReceiver.get(ll1)){
+                maxsize = realReceiver.get(ll1);
             }
         }
 
         this.array1 = new int[maxsize+1][maxsize+1];
 
-//        for(int i_1 = 0 ; i_1 < array2.length; i_1++){
-//            for(int j_1 =0; j_1 <array2.length; j_1++){
-//                array2[i_1][j_1]= 0;
-//            }
-//        }
-
         int count =0;
-        for(Integer i: realSender1){
-            this.array1[realSender1.get(count)][realReceiver1.get(count)] = 1;
+        for(Integer i: realSender){
+            this.array1[realSender.get(count)][realReceiver.get(count)] = 1;
             count++;
         }
-
-        // instance of the graph
-
-        realSender = realSender1;
-        realReceiver = realReceiver1;
-        realTime = realTime1;
-
     }
 
     /**
