@@ -330,49 +330,19 @@ public class UDWInteractionGraph {
     }
 
     /**
-     * @param sender the User ID of the sender in the email transaction.
-     * @param receiver the User ID of the receiver in the email transaction.
-     * @return the number of emails sent from the specified sender to the specified
-     * receiver in this UDWInteractionGraph.
+     * @param user1 the User ID of the first user.
+     * @param user2 the User ID of the second user.
+     * @return the number of email interactions (send/receive) between user1 and user2
      */
-    public int getEmailCount(int sender, int receiver) {
+    public int getEmailCount(int user1, int user2) {
         int count = 0;
         for (int i = 0; i < this.allSenders.size(); i++) {
-            if (this.allSenders.get(i) == sender || this.allSenders.get(i) == receiver ||
-                this.allReceivers.get(i) == sender || this.allReceivers.get(i) == receiver) {
+            if (this.allSenders.get(i) == user1 && this.allReceivers.get(i) == user2 ||
+                this.allSenders.get(i) == user2 && this.allReceivers.get(i) == user1) {
                 count++;
             }
         }
         return count;
-    }
-
-    /**
-     * Creates a new UDWInteractionGraph from a DWInteractionGraph object.
-     *
-     * @param inputDWIG a DWInteractionGraph object
-     */
-    public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
-        // TODO: Implement this constructor
-    }
-
-    /**
-     * @return a Set of Integers, where every element in the set is a User ID
-     * in this DWInteractionGraph.
-     */
-    public Set<Integer> getUserIDs() {
-        // TODO: Implement this getter method
-        return null;
-    }
-
-    /**
-     * @param sender the User ID of the sender in the email transaction.
-     * @param receiver the User ID of the receiver in the email transaction.
-     * @return the number of emails sent from the specified sender to the specified
-     * receiver in this DWInteractionGraph.
-     */
-    public int getEmailCount(int sender, int receiver) {
-        // TODO: Implement this getter method
-        return 0;
     }
 
     /* ------- Task 2 ------- */
