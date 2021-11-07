@@ -19,45 +19,82 @@ public class UDWInteractionGraph {
         try {
             File transactions = new File(fileName);
             Scanner fileReader = new Scanner(transactions);
-            UDWInteractions = new LinkedList[100];
-            while(fileReader.hasNextLine()) {
-                int sender = 0;
-                int receiver = 0;
-                int time = 0;
+            userIds = new HashSet<>();
+            allSenders = new ArrayList<>();
+            allReceivers = new ArrayList<>();
+            allSendTimes = new ArrayList<>();
+            int largestUserId = 0;
+
+            while (fileReader.hasNextInt()) {
                 for (int i = 0; i < 3; i++) {
-                    switch (i) {
-                        case 0:
-                            sender = fileReader.nextInt();
-                            break;
-                        case 1:
-                            receiver = fileReader.nextInt();
-                            break;
-                        case 2:
-                            time = fileReader.nextInt();
-                            break;
+                    int nextInt = fileReader.nextInt();
+                    if (i == 0) {
+                        userIds.add(nextInt);
+                        allSenders.add(nextInt);
+                        if (nextInt > largestUserId) {
+                            largestUserId = nextInt;
+                        }
+                    }
+                    if (i == 1) {
+                        userIds.add(nextInt);
+                        allReceivers.add(nextInt);
+                        if (nextInt > largestUserId) {
+                            largestUserId = nextInt;
+                        }
+                    }
+                    if (i == 2) {
+                        allSendTimes.add(nextInt);
                     }
                 }
-                if (UDWInteractions[sender] == null) {
-                    UDWInteractions[sender] = new LinkedList<>();
-                }
-                if (UDWInteractions[receiver] == null) {
-                    UDWInteractions[receiver] = new LinkedList<>();
-                }
-                UDWInteractions[sender].addFirst(receiver);
-                UDWInteractions[receiver].addFirst(sender);
             }
             fileReader.close();
+            fileReader = new Scanner(transactions);
+
+            UDWInteractions = new LinkedList[largestUserId + 1];
+
+            while (fileReader.hasNextInt()) {
+                int sender = 0;
+                int receiver = 0;
+                for (int i = 0; i < 3; i++) {
+                    int nextInt = fileReader.nextInt();
+                    if (i == 0) {
+                        sender = nextInt;
+                    }
+                    if (i == 1) {
+                        receiver = nextInt;
+                    }
+                    if (i == 2) {
+                        break;
+                    }
+                }
+
+                if (UDWInteractions[sender] == null) {
+                    UDWInteractions[sender] = new LinkedList<Integer>();
+                }
+                if (UDWInteractions[receiver] == null) {
+                    UDWInteractions[receiver] = new LinkedList<Integer>();
+                }
+                if(!UDWInteractions[sender].contains(receiver)) {
+                    UDWInteractions[sender].add(receiver);
+                }
+                if (!UDWInteractions[receiver].contains(sender)) {
+                    UDWInteractions[receiver].add(sender);
+                }
+            }
+            fileReader.close();
+
+            for (int i = 0; i <= largestUserId; i++) {
+                if (UDWInteractions[i] != null) {
+                    Collections.sort(UDWInteractions[i]);
+                }
+            }
+
         } catch (FileNotFoundException e) {
-            System.out.println("File cannot be read properly");
+            System.out.println("An error occurred while reading file");
+            e.printStackTrace();
         }
-
     }
 
-    private int numParticipants(File file) {
-        while(fileReader.hasNextLine())
-        return 1;
-    }
-    
     /**
      * Creates a new UDWInteractionGraph using an email interaction file.
      * The email interaction file will be in the resources directory.
@@ -74,38 +111,75 @@ public class UDWInteractionGraph {
         try {
             File transactions = new File(fileName);
             Scanner fileReader = new Scanner(transactions);
-            while (fileReader.hasNextLine()) {
-                int sender = 0;
-                int receiver = 0;
-                int time = timeFilter[0];
-                if (time > timeFilter[1]) {
+            userIds = new HashSet<>();
+            allSenders = new ArrayList<>();
+            allReceivers = new ArrayList<>();
+            allSendTimes = new ArrayList<>();
+            int largestUserId = 0;
+
+            //Find the new start of the transaction history
+            while (fileReader.hasNextInt()) {
+                fileReader.nextInt();
+                fileReader.nextInt();
+                if (fileReader.nextInt() >= timeFilter[0]) {
                     break;
                 }
+            }
+
+            //Update variables
+            while (fileReader.hasNextInt()) {
+                int[] transaction = new int[3];
                 for (int i = 0; i < 3; i++) {
-                    switch(i) {
-                        case 0:
-                            sender = fileReader.nextInt();
-                            break;
-                        case 1:
-                            receiver = fileReader.nextInt();
-                            break;
-                        case 2:
-                            time = fileReader.nextInt();
-                            break;
-                    }
+                    transaction[i] = fileReader.nextInt();
                 }
-                System.out.println("oi");
-                if (time >= timeFilter[0]) {
-                    UDWInteractions[sender].addFirst(receiver);
-                    UDWInteractions[receiver].addFirst(sender);
+                if (transaction[2] <= timeFilter[1]) {
+                    userIds.add(transaction[0]);
+                    userIds.add(transaction[1]);
+                    allSenders.add(transaction[0]);
+                    allReceivers.add(transaction[1]);
+                    allSendTimes.add(transaction[2]);
+                    if (transaction[0] > largestUserId) {
+                        largestUserId = transaction[0];
+                    }
+                    if (transaction[1] > largestUserId) {
+                        largestUserId = transaction[1];
+                    }
+                } else {
+                    break;
                 }
             }
             fileReader.close();
+            fileReader = new Scanner(transactions);
+
+            UDWInteractions = new LinkedList[largestUserId + 1];
+
+            //Construct UDW Graph
+            for(int i = 0; i < allSendTimes.size(); i++) {
+                if (UDWInteractions[allSenders.get(i)] == null) {
+                    UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
+                }
+                if (UDWInteractions[allReceivers.get(i)] == null) {
+                    UDWInteractions[allReceivers.get(i)] = new LinkedList<Integer>();
+                }
+                if(!UDWInteractions[allSenders.get(i)].contains(allReceivers.get(i))) {
+                    UDWInteractions[allSenders.get(i)].add(allReceivers.get(i));
+                }
+                if (!UDWInteractions[allReceivers.get(i)].contains(allSenders.get(i))) {
+                    UDWInteractions[allReceivers.get(i)].add(allSenders.get(i));
+                }
+            }
+            fileReader.close();
+
+            for (int i = 0; i <= largestUserId; i++) {
+                if (UDWInteractions[i] != null) {
+                    Collections.sort(UDWInteractions[i]);
+                }
+            }
+
         } catch (FileNotFoundException e) {
-            System.out.println("File cannot be read properly");
+            System.out.println("An error occurred while reading file");
             e.printStackTrace();
         }
-
     }
 
     /**
