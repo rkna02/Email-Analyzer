@@ -23,7 +23,7 @@ public class UDWInteractionGraph {
 
     public static void main(String[] args) {
         int[] arr = {10, 11};
-        int[] arr2 = {0,9};
+        int[] arr2 = {0, 2};
         List<Integer> list = new ArrayList<>();
         list.add(0);
         list.add(1);
@@ -32,9 +32,7 @@ public class UDWInteractionGraph {
         UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
         UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt", arr);
         UDWInteractionGraph obj4 = new UDWInteractionGraph(obj, list);
-        for (int i = 0; i < 4; i++) {
-            System.out.println(obj2.UDWInteractions[i]);
-        }
+        System.out.println(obj5.NthMostActiveUser(1));
     }
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -45,6 +43,7 @@ public class UDWInteractionGraph {
      *
      * @param fileName the name of the file in the resources
      *                 directory containing email interactions
+     * effects:        FileNotFound Exception if file is missing from the resources directory
      */
     public UDWInteractionGraph(String fileName) {
         try {
@@ -137,6 +136,10 @@ public class UDWInteractionGraph {
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
+     * effects:          Creates a new UDWInteraction graph where
+     *                   the size of the new UDWInteractionGraph is less than or equal to
+     *                   the size of inputUDWIG.  
+     *                   FileNotFound Exception if file is missing from the resources directory
      */
     public UDWInteractionGraph(String fileName, int[] timeFilter) {
         try {
@@ -209,6 +212,9 @@ public class UDWInteractionGraph {
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
+     * effects:          Creates a new UDWInteraction graph where
+     *                   the size of the new UDWInteractionGraph is less than or equal to
+     *                   the size of inputUDWIG.          
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
         userIds = new HashSet<>();
@@ -266,6 +272,9 @@ public class UDWInteractionGraph {
      *                   should exclude those emails in the input
      *                   UDWInteractionGraph for which neither the sender
      *                   nor the receiver exist in userFilter.
+     * effects:          Creates a new UDWInteraction graph where
+     *                   the size of the new UDWInteractionGraph is less than or equal to
+     *                   the size of inputUDWIG.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
         userIds = new HashSet<>();
@@ -333,9 +342,12 @@ public class UDWInteractionGraph {
      * @param user1 the User ID of the first user.
      * @param user2 the User ID of the second user.
      * @return the number of email interactions (send/receive) between user1 and user2
+     *         If the User ID of user1 or/and user2 is not found,
+     *         returns 0.
      */
     public int getEmailCount(int user1, int user2) {
         int count = 0;
+
         for (int i = 0; i < this.allSenders.size(); i++) {
             if (this.allSenders.get(i) == user1 && this.allReceivers.get(i) == user2 ||
                 this.allSenders.get(i) == user2 && this.allReceivers.get(i) == user1) {
@@ -350,6 +362,7 @@ public class UDWInteractionGraph {
     /**
      * @param timeWindow is an int array of size 2 [t0, t1]
      *                   where t0<=t1
+     *                   requires: t0 & t1 >= 0
      * @return an int array of length 2, with the following structure:
      *  [NumberOfUsers, NumberOfEmailTransactions]
      */
@@ -407,6 +420,7 @@ public class UDWInteractionGraph {
 
     /**
      * @param N a positive number representing rank. N=1 means the most active.
+     *          requires: N must be > 0
      * @return the User ID for the Nth most active user.
      * If the Nth most active user does not exist,
      * returns -1.
