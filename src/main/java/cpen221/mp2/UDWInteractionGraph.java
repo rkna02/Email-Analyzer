@@ -148,7 +148,6 @@ public class UDWInteractionGraph {
             allSendTimes = new ArrayList<>();
             int largestUserId = 0;
 
-            //Update variables
             while (fileReader.hasNextInt()) {
                 int[] transaction = new int[3];
                 for (int i = 0; i < 3; i++) {
@@ -166,8 +165,6 @@ public class UDWInteractionGraph {
                     if (transaction[1] > largestUserId) {
                         largestUserId = transaction[1];
                     }
-                } else {
-                    break;
                 }
             }
             fileReader.close();
@@ -223,14 +220,8 @@ public class UDWInteractionGraph {
 
         //Find starting index i after filtering time
         while (i < inputUDWIG.allSendTimes.size()) {
-            if (inputUDWIG.allSendTimes.get(i) >= timeFilter[0]) {
-                break;
-            }
-            i++;
-        }
-
-        while (i < inputUDWIG.allSendTimes.size()) {
-            if (inputUDWIG.allSendTimes.get(i) <= timeFilter[1]) {
+            if (inputUDWIG.allSendTimes.get(i) >= timeFilter[0] &&
+                inputUDWIG.allSendTimes.get(i) <= timeFilter[1]) {
                 allSenders.add(inputUDWIG.allSenders.get(i));
                 allReceivers.add(inputUDWIG.allReceivers.get(i));
                 allSendTimes.add(inputUDWIG.allSendTimes.get(i));
