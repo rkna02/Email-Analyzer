@@ -10,16 +10,17 @@ import java.util.Set;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Queue;
 
 public class UDWInteractionGraph {
 
     private LinkedList<Integer>[] UDWInteractions;
 
     private Set<Integer> userIds;
+    private int largestUserId;
     private List<Integer> allSenders;
     private List<Integer> allReceivers;
     private List<Integer> allSendTimes;
-
 
     public static void main(String[] args) {
         int[] arr = {10, 11};
@@ -30,9 +31,12 @@ public class UDWInteractionGraph {
         UDWInteractionGraph obj = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt");
         UDWInteractionGraph obj2 = new UDWInteractionGraph(obj, arr);
         UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
-        UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt", arr);
+        UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task3-components-test.txt");
         UDWInteractionGraph obj4 = new UDWInteractionGraph(obj, list);
-        System.out.println(obj5.NthMostActiveUser(1));
+        for (int i = 0; i < 5; i++) {
+            System.out.println(obj3.UDWInteractions[i]);
+        }
+        System.out.println(obj3.userIds);
     }
     /* ------- Task 1 ------- */
     /* Building the Constructors */
@@ -53,7 +57,7 @@ public class UDWInteractionGraph {
             allSenders = new ArrayList<>();
             allReceivers = new ArrayList<>();
             allSendTimes = new ArrayList<>();
-            int largestUserId = 0;
+            largestUserId = 0;
 
             while (fileReader.hasNextInt()) {
                 for (int i = 0; i < 3; i++) {
@@ -138,7 +142,7 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      * effects:          Creates a new UDWInteraction graph where
      *                   the size of the new UDWInteractionGraph is less than or equal to
-     *                   the size of inputUDWIG.  
+     *                   the size of inputUDWIG.
      *                   FileNotFound Exception if file is missing from the resources directory
      */
     public UDWInteractionGraph(String fileName, int[] timeFilter) {
@@ -149,7 +153,7 @@ public class UDWInteractionGraph {
             allSenders = new ArrayList<>();
             allReceivers = new ArrayList<>();
             allSendTimes = new ArrayList<>();
-            int largestUserId = 0;
+            largestUserId = 0;
 
             while (fileReader.hasNextInt()) {
                 int[] transaction = new int[3];
@@ -214,14 +218,14 @@ public class UDWInteractionGraph {
      *                   t0 <= t <= t1 range.
      * effects:          Creates a new UDWInteraction graph where
      *                   the size of the new UDWInteractionGraph is less than or equal to
-     *                   the size of inputUDWIG.          
+     *                   the size of inputUDWIG.
      */
     public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, int[] timeFilter) {
         userIds = new HashSet<>();
         allSenders = new ArrayList<>();
         allReceivers = new ArrayList<>();
         allSendTimes = new ArrayList<>();
-        int largestUserId = 0;
+        largestUserId = 0;
         int i = 0;
 
         //Find starting index i after filtering time
@@ -237,7 +241,9 @@ public class UDWInteractionGraph {
             i++;
         }
 
-        largestUserId = Collections.max(userIds);
+        if (userIds.size() != 0) {
+            largestUserId = Collections.max(userIds);
+        }
         UDWInteractions = new LinkedList[largestUserId + 1];
 
         //Construct UDW Graph
@@ -281,7 +287,7 @@ public class UDWInteractionGraph {
         allSenders = new ArrayList<>();
         allReceivers = new ArrayList<>();
         allSendTimes = new ArrayList<>();
-        int largestUserId = 0;
+        largestUserId = 0;
         int j = 0;
 
         for (int i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
@@ -295,7 +301,9 @@ public class UDWInteractionGraph {
             }
         }
 
-        largestUserId = Collections.max(userIds);
+        if (userIds.size() != 0) {
+            largestUserId = Collections.max(userIds);
+        }
         UDWInteractions = new LinkedList[largestUserId + 1];
 
         //Construct UDW Graph
@@ -422,13 +430,15 @@ public class UDWInteractionGraph {
      * @param N a positive number representing rank. N=1 means the most active.
      *          requires: N must be > 0
      * @return the User ID for the Nth most active user.
-     * If the Nth most active user does not exist,
-     * returns -1.
+     *         If the Nth most active user does not exist,
+     *         returns -1.
      */
     public int NthMostActiveUser(int N) {
-        List<List<Integer>> userRanks = new ArrayList<>();
+        //Convert the set of userIds to an array for accessing inner elements
         Integer[] userIdsArray = new Integer[this.userIds.size()];
         this.userIds.toArray(userIdsArray);
+
+        List<List<Integer>> userRanks = new ArrayList<>();
         int mostInteractions = 0;
         int nextMostInteractions = 0;
         int rankedUsers = 0;
@@ -474,12 +484,66 @@ public class UDWInteractionGraph {
     /* ------- Task 3 ------- */
 
     /**
+     * Creates an ArrayList of user IDs using an iterative method,
+     * indicating all visited users from rootUser
+     *
+     * @param rootUser the user ID to start the search with
+     * @return An arrayList of visited user IDs after a Breadth First Search
+     *
+     */
+    private List<Integer> UDWGraphBFS(int rootUser) {
+
+        if (UDWInteractions[rootUser] == null) {
+            return new ArrayList<>();
+        }
+
+        //Initialize queue and boolean array for keeping track of the search path
+        boolean[] visitedUser = new boolean[userIds.size() + 1];
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+
+        //Store visited users in an ArrayList
+        ArrayList<Integer> graphComponents = new ArrayList<>();
+
+        //Add the root user to the beginning of the queue
+        visitedUser[rootUser] = true;
+        queue.add(rootUser);
+
+        while (queue.size() != 0) {
+            //Remove the first user in the queue then search for the user's linked neighbours
+            rootUser = queue.poll();
+            graphComponents.add(rootUser);
+            for (int i = 0; i < UDWInteractions[rootUser].size(); i++) {
+                //Insert user ID into queue only if the user has not been visited by the search
+                if (!visitedUser[UDWInteractions[rootUser].get(i)]) {
+                    visitedUser[UDWInteractions[rootUser].get(i)] = true;
+                    queue.add(UDWInteractions[rootUser].get(i));
+                }
+            }
+        }
+
+        return graphComponents;
+    }
+
+    /**
      * @return the number of completely disjoint graph
      *    components in the UDWInteractionGraph object.
      */
     public int NumberOfComponents() {
-        // TODO: Implement this method
-        return 0;
+        //Convert the set of userIds to an array for accessing inner elements
+        Integer[] userIdsArray = new Integer[largestUserId];
+        userIds.toArray(userIdsArray);
+
+        List<Integer> searchedUsers = new ArrayList<>();
+        int count = 0;
+
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (!searchedUsers.contains(userIdsArray[i])) {
+                    searchedUsers.addAll(this.UDWGraphBFS(userIdsArray[i]));
+                    count++;
+                }
+            }
+
+        return count;
     }
 
     /**
@@ -488,8 +552,11 @@ public class UDWInteractionGraph {
      * @return whether a path exists between the two users
      */
     public boolean PathExists(int userID1, int userID2) {
-        // TODO: Implement this method
-        return false;
+        if (this.UDWGraphBFS(userID1).contains(userID2)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
