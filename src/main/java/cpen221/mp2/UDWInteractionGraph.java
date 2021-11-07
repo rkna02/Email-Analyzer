@@ -285,8 +285,8 @@ public class UDWInteractionGraph {
         int j = 0;
 
         for (int i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
-            if (!userFilter.contains(inputUDWIG.allSenders.get(i)) &&
-                !userFilter.contains(inputUDWIG.allReceivers.get(i))) {
+            if (userFilter.contains(inputUDWIG.allSenders.get(i)) ||
+                userFilter.contains(inputUDWIG.allReceivers.get(i))) {
                 allSenders.add(inputUDWIG.allSenders.get(i));
                 allReceivers.add(inputUDWIG.allReceivers.get(i));
                 allSendTimes.add(inputUDWIG.allSendTimes.get(i));
