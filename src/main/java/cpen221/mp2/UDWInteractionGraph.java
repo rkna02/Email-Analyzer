@@ -22,16 +22,18 @@ public class UDWInteractionGraph {
 
 
     public static void main(String[] args) {
-        int[] arr = {0, 2};
+        int[] arr = {10, 11};
+        int[] arr2 = {0,9};
         List<Integer> list = new ArrayList<>();
         list.add(0);
         list.add(1);
         UDWInteractionGraph obj = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt");
         UDWInteractionGraph obj2 = new UDWInteractionGraph(obj, arr);
+        UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
         UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt", arr);
         UDWInteractionGraph obj4 = new UDWInteractionGraph(obj, list);
         for (int i = 0; i < 4; i++) {
-            System.out.println(obj4.UDWInteractions[i]);
+            System.out.println(obj2.UDWInteractions[i]);
         }
     }
     /* ------- Task 1 ------- */
@@ -217,20 +219,24 @@ public class UDWInteractionGraph {
         allReceivers = new ArrayList<>();
         allSendTimes = new ArrayList<>();
         int largestUserId = 0;
-        int i;
+        int i = 0;
 
         //Find starting index i after filtering time
-        for (i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
+        while (i < inputUDWIG.allSendTimes.size()) {
             if (inputUDWIG.allSendTimes.get(i) >= timeFilter[0]) {
                 break;
             }
+            i++;
         }
-        while (inputUDWIG.allSendTimes.get(i) <= timeFilter[1]) {
-            allSenders.add(inputUDWIG.allSenders.get(i));
-            allReceivers.add(inputUDWIG.allReceivers.get(i));
-            allSendTimes.add(inputUDWIG.allSendTimes.get(i));
-            userIds.add(inputUDWIG.allSenders.get(i));
-            userIds.add(inputUDWIG.allReceivers.get(i));
+
+        while (i < inputUDWIG.allSendTimes.size()) {
+            if (inputUDWIG.allSendTimes.get(i) <= timeFilter[1]) {
+                allSenders.add(inputUDWIG.allSenders.get(i));
+                allReceivers.add(inputUDWIG.allReceivers.get(i));
+                allSendTimes.add(inputUDWIG.allSendTimes.get(i));
+                userIds.add(inputUDWIG.allSenders.get(i));
+                userIds.add(inputUDWIG.allReceivers.get(i));
+            }
             i++;
         }
 
@@ -313,6 +319,40 @@ public class UDWInteractionGraph {
                 Collections.sort(UDWInteractions[i]);
             }
         }
+    }
+
+    /**
+     * Creates a new UDWInteractionGraph from a DWInteractionGraph object.
+     *
+     * @param inputDWIG a DWInteractionGraph object
+     */
+    public UDWInteractionGraph(DWInteractionGraph inputDWIG) {
+        // TODO: Implement this constructor
+    }
+
+    /**
+     * @return a Set of Integers, where every element in the set is a User ID
+     * in this UDWInteractionGraph.
+     */
+    public Set<Integer> getUserIDs() {
+        return this.userIds;
+    }
+
+    /**
+     * @param sender the User ID of the sender in the email transaction.
+     * @param receiver the User ID of the receiver in the email transaction.
+     * @return the number of emails sent from the specified sender to the specified
+     * receiver in this UDWInteractionGraph.
+     */
+    public int getEmailCount(int sender, int receiver) {
+        int count = 0;
+        for (int i = 0; i < this.allSenders.size(); i++) {
+            if (this.allSenders.get(i) == sender || this.allSenders.get(i) == receiver ||
+                this.allReceivers.get(i) == sender || this.allReceivers.get(i) == receiver) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
