@@ -384,8 +384,20 @@ public class UDWInteractionGraph {
      *  [NumberOfUsers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // TODO: Implement this method
-        return null;
+        UDWInteractionGraph graphInTimeWindow = new UDWInteractionGraph(this, timeWindow);
+        Set<Integer> numUsersSet = new HashSet<>();
+        int[] data = new int[2];
+        int numUsers = 0;
+        int numEmails = 0;
+
+        numUsersSet = graphInTimeWindow.getUserIDs();
+        numUsers = numUsersSet.size();
+        numEmails = graphInTimeWindow.allSenders.size();
+
+        data[0] = numUsers;
+        data[1] = numEmails;
+
+        return data;
     }
 
     /**
@@ -397,17 +409,82 @@ public class UDWInteractionGraph {
      * returns [0, 0].
      */
     public int[] ReportOnUser(int userID) {
-        // TODO: Implement this method
-        return null;
+        Set<Integer> numUsersSet = new HashSet<>();
+        int numEmails = 0;
+        int numUsers = 0;
+        int[] data = new int[2];
+
+        if (!this.allSenders.contains(userID) && !this.allSenders.contains(userID)) {
+            return new int[]{0, 0};
+        } else {
+            for (int i = 0; i < this.allSenders.size(); i++) {
+                if (this.allSenders.get(i) == userID) {
+                    numEmails++;
+                    numUsersSet.add(allReceivers.get(i));
+                }
+                if (this.allReceivers.get(i) == userID) {
+                    numEmails++;
+                    numUsersSet.add(allSenders.get(i));
+                }
+            }
+        }
+        numUsers = numUsersSet.size();
+        data[0] = numEmails;
+        data[1] = numUsers;
+
+        return data;
     }
 
     /**
      * @param N a positive number representing rank. N=1 means the most active.
-     * @return the User ID for the Nth most active user
+     * @return the User ID for the Nth most active user.
+     * If the Nth most active user does not exist,
+     * returns -1.
      */
     public int NthMostActiveUser(int N) {
-        // TODO: Implement this method
-        return -1;
+        List<List<Integer>> userRanks = new ArrayList<>();
+        Integer[] userIdsArray = new Integer[this.userIds.size()];
+        this.userIds.toArray(userIdsArray);
+        int mostInteractions = 0;
+        int nextMostInteractions = 0;
+        int rankedUsers = 0;
+
+        //Find the mostInteractions done by a user
+        for (int i = 0; i < this.getUserIDs().size(); i++) {
+            if (this.ReportOnUser(i)[0] > mostInteractions) {
+                mostInteractions = this.ReportOnUser(i)[0];
+            }
+        }
+
+        //Create a List of Lists with user rankings
+        while (rankedUsers < this.userIds.size()) {
+            List<Integer> NthRankUsers = new ArrayList<>();
+            for (int i = 0; i < this.userIds.size(); i++) {
+                if (this.ReportOnUser(i)[0] == mostInteractions) {
+                    NthRankUsers.add(userIdsArray[i]);
+                    rankedUsers++;
+                }
+            }
+            Collections.sort(NthRankUsers);
+            userRanks.add(NthRankUsers);
+
+            //Update mostInteractions
+            nextMostInteractions = 0;
+            for (int i = 0; i < this.getUserIDs().size(); i++) {
+                if (this.ReportOnUser(i)[0] < mostInteractions &&
+                    this.ReportOnUser(i)[0] > nextMostInteractions) {
+                    nextMostInteractions = this.ReportOnUser(i)[0];
+                }
+            }
+            mostInteractions = nextMostInteractions;
+        }
+
+        if (userRanks.get(N - 1) == null) {
+            return -1;
+        } else {
+            return userRanks.get(N - 1).get(0);
+        }
+
     }
 
     /* ------- Task 3 ------- */
