@@ -406,122 +406,98 @@ public class DWInteractionGraph {
      */
 
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
-        // for sender id get the number of emails sent
-        // map id with that number
-        // iterate through the map to create an descending list
+        //Convert the set of userIds to an array for accessing inner elements
+        Integer[] userIdsArray = new Integer[getUserIDs().size()];
+        getUserIDs().toArray(userIdsArray);
 
-        // TODO: Implement this method
+        List<Integer> userIdsList = new ArrayList<>();
+        List<List<Integer>> userRanks = new ArrayList<>();
 
+        if (interactionType == SendOrReceive.SEND) {
+            int mostSentEmails = 0;
+            int nextMostSentEmails = 0;
+            int rankedUsers = 0;
 
-        Map<Integer, Integer> hmap = new HashMap<>();
-
-        //List<Integer> wtf = new ArrayList<>();
-        // through realSender
-        for (Integer integer : realSender) {
-            int val = 0;
-            // make sure hmap does not have that key which is the first element of realSener List
-            if (!hmap.containsKey(integer)) {
-                int ttt = ReportOnUser(integer)[0];
-                //wtf.add(integer);
-                hmap.put(integer, ttt);
-
-            }
-        }
-
-        List<Integer> great = new ArrayList<>();
-        Set<Integer> ss = new HashSet<>(hmap.keySet());
-        List<Integer> ss1 = new ArrayList<>(ss);
-
-        Set<Integer> con = new HashSet<>();
-
-        for (int j = 0; j < hmap.size(); j++) {
-            int maxx = hmap.get(ss1.get(j));
-            int index1 = ss1.get(j);
-            int loc = 0;
-            for (int k = j; k < hmap.size(); k++) {
-                if ((hmap.get(ss1.get(j)) < hmap.get(ss1.get(k))) && !con.contains(ss1.get(k))) {
-                    index1 = ss1.get(k);
-                    maxx = hmap.get(k);
-                    loc = k;
-                } else if ((hmap.get(ss1.get(j)).equals(hmap.get(ss1.get(k)))) && j != k) {
-                    if (!con.contains(ss1.get(k))) {
-                        if (j > k) {
-                            index1 = ss1.get(k);
-                            maxx = hmap.get(k);
-                            loc = k;
-                        }
-                    }
-
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realSender.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
                 }
             }
-            great.add(index1);
-            con.add(ss1.get(loc));
-        }
-        //---------------------------------------------------------------------------------------------------------------------------
-        Map<Integer, Integer> hmap2 = new HashMap<>();
-
-        //List<Integer> wtf2 = new ArrayList<>();
-        // through realSender
-        for (Integer integer : realReceiver) {
-            int val = 0;
-            // make sure hmap does not have that key which is the first element of realSener List
-            if (!hmap2.containsKey(integer)) {
-                int ttt = ReportOnUser(integer)[1];
-                //wtf2.add(integer);
-                hmap2.put(integer, ttt);
-
-            }
-        }
-
-        List<Integer> great2 = new ArrayList<>();
-        Set<Integer> ss3 = new HashSet<>(hmap2.keySet());
-        List<Integer> ss4 = new ArrayList<>(ss3);
-
-        Set<Integer> con2 = new HashSet<>();
-
-        for (int j = 0; j < hmap2.size(); j++) {
-            int maxx = hmap2.get(ss4.get(j));
-            int index1 = ss4.get(j);
-            int loc = 0;
-            for (int k = j; k < hmap2.size(); k++) {
-                if ((hmap2.get(ss4.get(j)) < hmap2.get(ss4.get(k))) && !con2.contains(ss4.get(k))) {
-                    index1 = ss4.get(k);
-                    maxx = hmap2.get(k);
-                    loc = k;
-                } else if ((hmap2.get(ss4.get(j)).equals(hmap2.get(ss4.get(k)))) && j != k) {
-                    if (!con2.contains(ss4.get(k))) {
-                        if (j > k) {
-                            index1 = ss4.get(k);
-                            maxx = hmap2.get(k);
-                            loc = k;
-                        }
-                    }
-
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[0] > mostSentEmails) {
+                    mostSentEmails = ReportOnUser(userIdsList.get(i))[0];
                 }
             }
-            great2.add(index1);
-            con2.add(ss4.get(loc));
-        }
-//--------------------------------------------------------------------------------------------------------------------------------------
-        SendOrReceive rr = SendOrReceive.SEND;
 
-        // it's send
+            //Create a List of Lists with user rankings at every Nth rank
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] == mostSentEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.add(NthRankUsers);
 
-
-        if (rr == interactionType) {
-            if (N > hmap.size() || N < 1) {
-                return -1;
-            } else {
-                return great.get(N - 1);
+                //Update mostInteractions
+                nextMostSentEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] < mostSentEmails &&
+                        ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
+                        nextMostSentEmails = ReportOnUser(userIdsList.get(i))[0];
+                    }
+                }
+                mostSentEmails = nextMostSentEmails;
             }
 
+        } else if (interactionType == SendOrReceive.RECEIVE) {
+            int mostReceivedEmails = 0;
+            int nextMostReceivedEmails = 0;
+            int rankedUsers = 0;
 
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realReceiver.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
+                }
+            }
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[1] > mostReceivedEmails) {
+                    mostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                }
+            }
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] == mostReceivedEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.add(NthRankUsers);
+
+                //Update mostInteractions
+                nextMostReceivedEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] < mostReceivedEmails &&
+                        ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
+                        nextMostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                    }
+                }
+                mostReceivedEmails = nextMostReceivedEmails;
+            }
+        }
+
+        if (N > userRanks.size()) {
+            return -1;
+        } else if (userRanks.get(N - 1).size() == 0){
+            return -1;
         } else {
-            if (N > hmap2.size() || N < 1) {
-                return -1;
-            } else {
-                return great2.get(N - 1);
-            }
+            return userRanks.get(N - 1).get(0);
         }
     }
 
