@@ -618,12 +618,6 @@ public class DWInteractionGraph {
             size.add(integer1);
         }
         int max = Collections.max(size);
-
-        Set<Integer> IDs = getUserIDs();
-
-        if (!IDs.contains(userID1) || !IDs.contains(userID2)) {
-            return null;
-        }
         // int sizeOfV = size.size();
         List<Integer> theList = new ArrayList<>();
         theList.add(userID1);

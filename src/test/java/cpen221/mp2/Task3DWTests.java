@@ -41,4 +41,10 @@ public class Task3DWTests {
         List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
         Assertions.assertEquals(expected, dwig2.DFS(1, 10));
     }
+
+    @Test
+    public void testBFS() {
+        List<Integer> expected = Arrays.asList(3,1,4,8,5,6);
+        Assertions.assertEquals(expected, dwig2.BFS(3,6));
+    }
 }

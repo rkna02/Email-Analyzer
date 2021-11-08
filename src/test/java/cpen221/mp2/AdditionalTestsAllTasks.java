@@ -11,17 +11,23 @@ import java.util.List;
 
 public class AdditionalTestsAllTasks {
 
-    /** DW Test Graphs */
+    /**
+     * DW Test Graphs
+     */
     private static DWInteractionGraph dwig1a, dwig1b, dwig1c, dwig1d, dwig1e;
     private static DWInteractionGraph dwig2a, dwig2b, dwig2c, dwig2d, dwig2e;
     private static DWInteractionGraph dwig3a, dwig3b, dwig3c, dwig3d, dwig3e;
 
-    /** UDW Test Graphs */
+    /**
+     * UDW Test Graphs
+     */
     private static UDWInteractionGraph udwig1a, udwig1b, udwig1c, udwig1d, udwig1e, udwig1f;
     private static UDWInteractionGraph udwig2a, udwig2b, udwig2c, udwig2d, udwig2e, udwig2f;
 
 
-    /** Set up test graphs */
+    /**
+     * Set up test graphs
+     */
     @BeforeAll
     public static void setupTests() {
         //Setup DW test graphs
@@ -55,7 +61,9 @@ public class AdditionalTestsAllTasks {
 
     }
 
-    /** Task 1 DW tests */
+    /**
+     * Task 1 DW tests
+     */
     @Test
     public void DWTestConstruction1() {
         Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 2, 3, 4, 6)), dwig1a.getUserIDs());
@@ -97,7 +105,9 @@ public class AdditionalTestsAllTasks {
     }
 
 
-    /** Task 1 UDW tests */
+    /**
+     * Task 1 UDW tests
+     */
     @Test
     public void UDWTestConstruction1() {
         Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 2, 3, 4, 6)), udwig1a.getUserIDs());
@@ -151,7 +161,9 @@ public class AdditionalTestsAllTasks {
 
     /** Task 2 UDW tests */
 
-    /** Task 3 DW tests */
+    /**
+     * Task 3 DW tests
+     */
     @Test
     public void testBFSInvalidUserID() {
         Assertions.assertEquals(null, dwig1a.BFS(1, 8));
@@ -175,15 +187,33 @@ public class AdditionalTestsAllTasks {
     }
 
     @Test
-    public void testBFSGraph2() {
+    public void testBFSGraph1() {
         List<Integer> expected = Arrays.asList(1, 3, 5, 6, 4, 8, 7, 2, 9, 10);
         Assertions.assertEquals(expected, dwig2a.BFS(1, 10));
     }
 
     @Test
-    public void testDFSGraph2() {
+    public void testDFSGraph1() {
         List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
         Assertions.assertEquals(expected, dwig2a.DFS(1, 10));
+    }
+
+    @Test
+    public void testBFSGraph2() {
+        List<Integer> expected = Arrays.asList(3, 1, 4, 8, 5, 6);
+        Assertions.assertEquals(expected, dwig2a.BFS(3, 6));
+    }
+
+    @Test
+    public void testDFSGraph2() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2, 9, 10, 6);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 6));
+    }
+
+    @Test
+    public void testDFSGraph3() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 2));
     }
 }
 
