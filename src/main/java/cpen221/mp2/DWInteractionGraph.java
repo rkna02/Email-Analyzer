@@ -1,5 +1,8 @@
 package cpen221.mp2;
 
+import org.w3c.dom.Node;
+
+import javax.xml.stream.events.EndDocument;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -381,14 +384,14 @@ public class DWInteractionGraph {
 
         Map<Integer, Integer> hmap = new HashMap<>();
 
-        List<Integer> wtf = new ArrayList<>();
+        //List<Integer> wtf = new ArrayList<>();
         // through realSender
         for (Integer integer : realSender) {
             int val = 0;
             // make sure hmap does not have that key which is the first element of realSener List
             if (!hmap.containsKey(integer)) {
                 int ttt = ReportOnUser(integer)[0];
-                wtf.add(integer);
+                //wtf.add(integer);
                 hmap.put(integer, ttt);
 
             }
@@ -474,21 +477,21 @@ public class DWInteractionGraph {
         // it's send
 
 
-            if (rr == interactionType) {
-                if(N>hmap.size() || N<1){
-                    return -1;
-                }else{
-                    return great.get(N - 1);
-                }
-
-
+        if (rr == interactionType) {
+            if (N > hmap.size() || N < 1) {
+                return -1;
             } else {
-                if(N>hmap2.size() || N<1){
-                    return -1;
-                }else{
-                    return great2.get(N - 1);
-                }
+                return great.get(N - 1);
             }
+
+
+        } else {
+            if (N > hmap2.size() || N < 1) {
+                return -1;
+            } else {
+                return great2.get(N - 1);
+            }
+        }
     }
 
     /* ------- Task 3 ------- */
@@ -520,8 +523,83 @@ public class DWInteractionGraph {
      */
     public List<Integer> DFS(int userID1, int userID2) {
         // TODO: Implement this method
+        Set<Integer> size = new HashSet<>();
+        for (Integer integer : realSender) {
+            size.add(integer);
+        }
+        for (Integer integer1 : realReceiver) {
+            size.add(integer1);
+        }
+        int max = Collections.max(size);
+        // int sizeOfV = size.size();
+        List<Integer> theList = new ArrayList<>();
+        theList.add(userID1);
+        DFS1(userID1, max + 1, userID2, theList);
+
+        if (theList.contains(userID2)) {
+            return theList;
+        }
+
         return null;
     }
+
+    // v is number of vertices
+    void DFS1(int start, int S, int userID2, List<Integer> theList) {
+        //S is num of vertices
+        boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
+        DFSUtil(start, visited, userID2, theList,  0);
+    }
+
+    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track) {
+        // mark the current node as visited
+        // and add the node to the return list
+        visited[v] = true;
+
+        //int track = 0;
+        for (int i = 0; i < array1.length; i++) {
+            if (array1[v][i] == 1) {
+
+                if (i == userID2) {
+                    track++;
+                    theList.add(i);
+
+
+                    break;
+                } else if (!visited[i]) {
+                    theList.add(i);
+                    DFSUtil(i, visited, userID2, theList,track);
+                    break;
+                }
+            }
+            // go to the previous one to check
+        }
+
+        if(track==0){
+            Boolean b = true;
+            for (Boolean bb : visited) {
+                if (bb == false) {
+                    b = bb;
+                }
+            }
+
+            int previous = 0;
+            // obtain the previous node
+            for (int j = 0; j < array1.length; j++) {
+                if (array1[j][v] == 1) {
+                    previous = j;
+                    break;
+                }
+            }
+            if (track == 0 && b == false) {
+                DFSUtil(previous, visited, userID2, theList,track);
+
+            } else {
+                System.out.println("end");
+            }
+        }
+    }
+
+
 
     /* ------- Task 4 ------- */
 
