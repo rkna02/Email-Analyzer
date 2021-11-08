@@ -41,12 +41,17 @@ public class DWInteractionGraph {
 
 
     /**
-     * Creates a new DWInteractionGraph using an email interaction file.
+     * Creates a new DWInteractionGraph using an email interaction file with a time filter.
      * The email interaction file will be in the resources directory.
      *
-     * @param timeWindow an array of length 2 used to specify constraints
-     * @param fileName   the name of the file in the resources
-     *                   directory containing email interactions
+     * @param fileName the name of the file in the resources
+     *                 directory containing email interactions
+     * @param timeFilter an integer array of length 2: [t0, t1]
+     *                   where t0 <= t1. The created UDWInteractionGraph
+     *                   should only include those emails in the input
+     *                   UDWInteractionGraph with send time t in the
+     *                   t0 <= t <= t1 range.
+     * effects:          FileNotFound Exception if file is missing from the resources directory
      */
     public DWInteractionGraph(String fileName, int[] timeWindow) {
         List<Integer> sender = new ArrayList<>(); // a List of sender info
