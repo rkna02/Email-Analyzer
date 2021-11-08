@@ -705,10 +705,11 @@ public class DWInteractionGraph {
     /* ------- Task 4 ------- */
 
     /**
-     * Read the MP README file carefully to understand
-     * what is required from this method.
+     * Calculates the maximum number of users that can be polluted by a hacker's Email in N hours
+     * Users can be polluted by receiving polluted Emails from their colleagues,
+     * and would spread the malware as more Emails are being sent and received.
      *
-     * @param hours
+     * @param hours Number of hours after the first victim receives an Email
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
