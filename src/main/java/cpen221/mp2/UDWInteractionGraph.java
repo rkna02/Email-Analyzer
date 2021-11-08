@@ -160,10 +160,7 @@ public class UDWInteractionGraph {
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
-     * effects:          Creates a new UDWInteractionGraph where
-     *                   the size of the new UDWInteractionGraph is less than or equal to
-     *                   the size of inputUDWIG.
-     *                   FileNotFound Exception if file is missing from the resources directory
+     * effects:          FileNotFound Exception if file is missing from the resources directory
      */
     public UDWInteractionGraph(String fileName, int[] timeFilter) {
         try {
