@@ -1,7 +1,6 @@
 package cpen221.mp2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -33,11 +32,9 @@ public class UDWInteractionGraph {
         UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
         UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task3-components-test.txt");
         UDWInteractionGraph obj4 = new UDWInteractionGraph(obj, list);
-        for (int i = 0; i < 5; i++) {
-            System.out.println(obj3.UDWInteractions[i]);
-        }
-        System.out.println(obj3.userIds);
+
     }
+
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
@@ -59,64 +56,48 @@ public class UDWInteractionGraph {
             allSendTimes = new ArrayList<>();
             largestUserId = 0;
 
+            //Save 1st integer in every line to allSenders
+            //Save 2nd integer in every line to allReceivers
+            //Save 3rd integer in every line to allSendTimes
+            //Constantly update userIds and largestUserId
             while (fileReader.hasNextInt()) {
+                int[] transaction = new int[3];
                 for (int i = 0; i < 3; i++) {
-                    int nextInt = fileReader.nextInt();
-                    if (i == 0) {
-                        userIds.add(nextInt);
-                        allSenders.add(nextInt);
-                        if (nextInt > largestUserId) {
-                            largestUserId = nextInt;
-                        }
-                    }
-                    if (i == 1) {
-                        userIds.add(nextInt);
-                        allReceivers.add(nextInt);
-                        if (nextInt > largestUserId) {
-                            largestUserId = nextInt;
-                        }
-                    }
-                    if (i == 2) {
-                        allSendTimes.add(nextInt);
-                    }
+                    transaction[i] = fileReader.nextInt();
+                }
+                userIds.add(transaction[0]);
+                userIds.add(transaction[1]);
+                allSenders.add(transaction[0]);
+                allReceivers.add(transaction[1]);
+                allSendTimes.add(transaction[2]);
+                if (transaction[0] > largestUserId) {
+                    largestUserId = transaction[0];
+                }
+                if (transaction[1] > largestUserId) {
+                    largestUserId = transaction[1];
                 }
             }
             fileReader.close();
-            fileReader = new Scanner(transactions);
 
+            //Construct Adjacency List
             UDWInteractions = new LinkedList[largestUserId + 1];
 
-            while (fileReader.hasNextInt()) {
-                int sender = 0;
-                int receiver = 0;
-                for (int i = 0; i < 3; i++) {
-                    int nextInt = fileReader.nextInt();
-                    if (i == 0) {
-                        sender = nextInt;
-                    }
-                    if (i == 1) {
-                        receiver = nextInt;
-                    }
-                    if (i == 2) {
-                        break;
-                    }
+            for(int i = 0; i < allSendTimes.size(); i++) {
+                if (UDWInteractions[allSenders.get(i)] == null) {
+                    UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
                 }
-
-                if (UDWInteractions[sender] == null) {
-                    UDWInteractions[sender] = new LinkedList<Integer>();
+                if (UDWInteractions[allReceivers.get(i)] == null) {
+                    UDWInteractions[allReceivers.get(i)] = new LinkedList<Integer>();
                 }
-                if (UDWInteractions[receiver] == null) {
-                    UDWInteractions[receiver] = new LinkedList<Integer>();
+                if(!UDWInteractions[allSenders.get(i)].contains(allReceivers.get(i))) {
+                    UDWInteractions[allSenders.get(i)].add(allReceivers.get(i));
                 }
-                if(!UDWInteractions[sender].contains(receiver)) {
-                    UDWInteractions[sender].add(receiver);
-                }
-                if (!UDWInteractions[receiver].contains(sender)) {
-                    UDWInteractions[receiver].add(sender);
+                if (!UDWInteractions[allReceivers.get(i)].contains(allSenders.get(i))) {
+                    UDWInteractions[allReceivers.get(i)].add(allSenders.get(i));
                 }
             }
-            fileReader.close();
 
+            //Sort each LinkedList in ascending order of user IDs
             for (int i = 0; i <= largestUserId; i++) {
                 if (UDWInteractions[i] != null) {
                     Collections.sort(UDWInteractions[i]);
@@ -140,7 +121,7 @@ public class UDWInteractionGraph {
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
-     * effects:          Creates a new UDWInteraction graph where
+     * effects:          Creates a new UDWInteractionGraph where
      *                   the size of the new UDWInteractionGraph is less than or equal to
      *                   the size of inputUDWIG.
      *                   FileNotFound Exception if file is missing from the resources directory
@@ -155,11 +136,16 @@ public class UDWInteractionGraph {
             allSendTimes = new ArrayList<>();
             largestUserId = 0;
 
+            //Save 1st integer in every line to allSenders
+            //Save 2nd integer in every line to allReceivers
+            //Save 3rd integer in every line to allSendTimes
+            //Constantly update userIds and largestUserId
             while (fileReader.hasNextInt()) {
                 int[] transaction = new int[3];
                 for (int i = 0; i < 3; i++) {
                     transaction[i] = fileReader.nextInt();
                 }
+                //Apply time filter
                 if (transaction[2] >= timeFilter[0] && transaction[2] <= timeFilter[1]) {
                     userIds.add(transaction[0]);
                     userIds.add(transaction[1]);
@@ -176,9 +162,9 @@ public class UDWInteractionGraph {
             }
             fileReader.close();
 
+            //Construct Adjacency List
             UDWInteractions = new LinkedList[largestUserId + 1];
 
-            //Construct UDW Graph
             for(int i = 0; i < allSendTimes.size(); i++) {
                 if (UDWInteractions[allSenders.get(i)] == null) {
                     UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
@@ -194,6 +180,7 @@ public class UDWInteractionGraph {
                 }
             }
 
+            //Sort each LinkedList in ascending order of user IDs
             for (int i = 0; i <= largestUserId; i++) {
                 if (UDWInteractions[i] != null) {
                     Collections.sort(UDWInteractions[i]);
@@ -226,10 +213,9 @@ public class UDWInteractionGraph {
         allReceivers = new ArrayList<>();
         allSendTimes = new ArrayList<>();
         largestUserId = 0;
-        int i = 0;
 
-        //Find starting index i after filtering time
-        while (i < inputUDWIG.allSendTimes.size()) {
+        //Apply time filter
+        for (int i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
             if (inputUDWIG.allSendTimes.get(i) >= timeFilter[0] &&
                 inputUDWIG.allSendTimes.get(i) <= timeFilter[1]) {
                 allSenders.add(inputUDWIG.allSenders.get(i));
@@ -238,75 +224,15 @@ public class UDWInteractionGraph {
                 userIds.add(inputUDWIG.allSenders.get(i));
                 userIds.add(inputUDWIG.allReceivers.get(i));
             }
-            i++;
         }
 
         if (userIds.size() != 0) {
             largestUserId = Collections.max(userIds);
         }
+
+        //Construct Adjacency List
         UDWInteractions = new LinkedList[largestUserId + 1];
-
-        //Construct UDW Graph
-        for(i = 0; i < allSendTimes.size(); i++) {
-            if (UDWInteractions[allSenders.get(i)] == null) {
-                UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
-            }
-            if (UDWInteractions[allReceivers.get(i)] == null) {
-                UDWInteractions[allReceivers.get(i)] = new LinkedList<Integer>();
-            }
-            if(!UDWInteractions[allSenders.get(i)].contains(allReceivers.get(i))) {
-                UDWInteractions[allSenders.get(i)].add(allReceivers.get(i));
-            }
-            if (!UDWInteractions[allReceivers.get(i)].contains(allSenders.get(i))) {
-                UDWInteractions[allReceivers.get(i)].add(allSenders.get(i));
-            }
-        }
-
-        for (i = 0; i <= largestUserId; i++) {
-            if (UDWInteractions[i] != null) {
-                Collections.sort(UDWInteractions[i]);
-            }
-        }
-    }
-
-    /**
-     * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
-     * and considering a list of User IDs.
-     *
-     * @param inputUDWIG a UDWInteractionGraph object
-     * @param userFilter a List of User IDs. The created UDWInteractionGraph
-     *                   should exclude those emails in the input
-     *                   UDWInteractionGraph for which neither the sender
-     *                   nor the receiver exist in userFilter.
-     * effects:          Creates a new UDWInteraction graph where
-     *                   the size of the new UDWInteractionGraph is less than or equal to
-     *                   the size of inputUDWIG.
-     */
-    public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
-        userIds = new HashSet<>();
-        allSenders = new ArrayList<>();
-        allReceivers = new ArrayList<>();
-        allSendTimes = new ArrayList<>();
-        largestUserId = 0;
-        int j = 0;
-
-        for (int i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
-            if (userFilter.contains(inputUDWIG.allSenders.get(i)) ||
-                userFilter.contains(inputUDWIG.allReceivers.get(i))) {
-                allSenders.add(inputUDWIG.allSenders.get(i));
-                allReceivers.add(inputUDWIG.allReceivers.get(i));
-                allSendTimes.add(inputUDWIG.allSendTimes.get(i));
-                userIds.add(inputUDWIG.allSenders.get(i));
-                userIds.add(inputUDWIG.allReceivers.get(i));
-            }
-        }
-
-        if (userIds.size() != 0) {
-            largestUserId = Collections.max(userIds);
-        }
-        UDWInteractions = new LinkedList[largestUserId + 1];
-
-        //Construct UDW Graph
+        
         for(int i = 0; i < allSendTimes.size(); i++) {
             if (UDWInteractions[allSenders.get(i)] == null) {
                 UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
@@ -322,6 +248,70 @@ public class UDWInteractionGraph {
             }
         }
 
+        //Sort each LinkedList in ascending order of user IDs
+        for (int i = 0; i <= largestUserId; i++) {
+            if (UDWInteractions[i] != null) {
+                Collections.sort(UDWInteractions[i]);
+            }
+        }
+    }
+
+    /**
+     * Creates a new UDWInteractionGraph from a UDWInteractionGraph object
+     * and considering a list of User IDs.
+     *
+     * @param inputUDWIG a UDWInteractionGraph object
+     * @param userFilter a List of User IDs. The created UDWInteractionGraph
+     *                   should exclude those emails in the input
+     *                   UDWInteractionGraph for which neither the sender
+     *                   nor the receiver exist in userFilter.
+     * requires:         List is not null
+     * effects:          Creates a new UDWInteraction graph where
+     *                   the size of the new UDWInteractionGraph is less than or equal to
+     *                   the size of inputUDWIG.
+     */
+    public UDWInteractionGraph(UDWInteractionGraph inputUDWIG, List<Integer> userFilter) {
+        userIds = new HashSet<>();
+        allSenders = new ArrayList<>();
+        allReceivers = new ArrayList<>();
+        allSendTimes = new ArrayList<>();
+        largestUserId = 0;
+
+        //Apply user filter
+        for (int i = 0; i < inputUDWIG.allSendTimes.size(); i++) {
+            if (userFilter.contains(inputUDWIG.allSenders.get(i)) ||
+                userFilter.contains(inputUDWIG.allReceivers.get(i))) {
+                allSenders.add(inputUDWIG.allSenders.get(i));
+                allReceivers.add(inputUDWIG.allReceivers.get(i));
+                allSendTimes.add(inputUDWIG.allSendTimes.get(i));
+                userIds.add(inputUDWIG.allSenders.get(i));
+                userIds.add(inputUDWIG.allReceivers.get(i));
+            }
+        }
+
+        if (userIds.size() != 0) {
+            largestUserId = Collections.max(userIds);
+        }
+
+        //Construct Adjacency List
+        UDWInteractions = new LinkedList[largestUserId + 1];
+        
+        for(int i = 0; i < allSendTimes.size(); i++) {
+            if (UDWInteractions[allSenders.get(i)] == null) {
+                UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
+            }
+            if (UDWInteractions[allReceivers.get(i)] == null) {
+                UDWInteractions[allReceivers.get(i)] = new LinkedList<Integer>();
+            }
+            if(!UDWInteractions[allSenders.get(i)].contains(allReceivers.get(i))) {
+                UDWInteractions[allSenders.get(i)].add(allReceivers.get(i));
+            }
+            if (!UDWInteractions[allReceivers.get(i)].contains(allSenders.get(i))) {
+                UDWInteractions[allReceivers.get(i)].add(allSenders.get(i));
+            }
+        }
+
+        //Sort each LinkedList in ascending order of user IDs
         for (int i = 0; i <= largestUserId; i++) {
             if (UDWInteractions[i] != null) {
                 Collections.sort(UDWInteractions[i]);
@@ -340,7 +330,10 @@ public class UDWInteractionGraph {
 
     /**
      * @return a Set of Integers, where every element in the set is a User ID
-     * in this UDWInteractionGraph.
+     *         in this UDWInteractionGraph.
+     *         If there are no users in UDWInteractionGraph,
+     *         returns an empty Set.
+     *          
      */
     public Set<Integer> getUserIDs() {
         return this.userIds;
@@ -349,13 +342,13 @@ public class UDWInteractionGraph {
     /**
      * @param user1 the User ID of the first user.
      * @param user2 the User ID of the second user.
-     * @return the number of email interactions (send/receive) between user1 and user2
+     * @return The number of email interactions (send/receive) between user1 and user2.
      *         If the User ID of user1 or/and user2 is not found,
      *         returns 0.
      */
     public int getEmailCount(int user1, int user2) {
         int count = 0;
-
+        
         for (int i = 0; i < this.allSenders.size(); i++) {
             if (this.allSenders.get(i) == user1 && this.allReceivers.get(i) == user2 ||
                 this.allSenders.get(i) == user2 && this.allReceivers.get(i) == user1) {
