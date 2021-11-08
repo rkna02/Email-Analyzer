@@ -624,74 +624,66 @@ public class DWInteractionGraph {
             size.add(integer1);
         }
         int max = Collections.max(size);
-        // int sizeOfV = size.size();
         List<Integer> theList = new ArrayList<>();
         theList.add(userID1);
         DFS1(userID1, max + 1, userID2, theList);
-
-        if (theList.contains(userID2)) {
-            return theList;
+        List<Integer> thereturnone = new ArrayList<>();
+        boolean havenorNot = false;
+        for (int k = 0; k < theList.size(); k++) {
+            thereturnone.add(theList.get(k));
+            if (theList.get(k) == userID2) {
+                havenorNot = true;
+                break;
+            }
         }
-
+        if (havenorNot == true) {
+            return thereturnone;
+        }
         return null;
     }
 
-    // v is number of vertices
+
+
+    /**
+     * helper method as an intermediate step of DFS algorithm
+     * set up the node visit history array
+     *
+     * @param start means userId1
+     * @param S is number of vertices+1
+     * @param userID2 destination that we are hunting down
+     * @param theList the order of DFS
+     */
     void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
+        int[][] array2 = new int[DWInteractions.length][DWInteractions.length];
         boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
-        DFSUtil(start, visited, userID2, theList,  0);
+
+        DFSUtil(start, visited, userID2, theList);
     }
 
-    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track) {
+    /**
+     *  DFS algorithm, stops when it finish searching its possibilities
+     * @param v the current node
+     * @param visited the array of nodes that are visited or not
+     * @param userID2 the destination node
+     * @param theList the list of order of the visit
+     */
+    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList) {
         // mark the current node as visited
         // and add the node to the return list
         visited[v] = true;
-
-        //int track = 0;
         for (int i = 0; i < DWInteractions.length; i++) {
             if (DWInteractions[v][i] == 1) {
-
                 if (i == userID2) {
-                    track++;
                     theList.add(i);
-
-
                     break;
                 } else if (!visited[i]) {
                     theList.add(i);
-                    DFSUtil(i, visited, userID2, theList,track);
-                    break;
+                    DFSUtil(i, visited, userID2, theList);
                 }
-            }
-            // go to the previous one to check
-        }
-
-        if(track==0){
-            Boolean b = true;
-            for (Boolean bb : visited) {
-                if (bb == false) {
-                    b = bb;
-                }
-            }
-
-            int previous = 0;
-            // obtain the previous node
-            for (int j = 0; j < DWInteractions.length; j++) {
-                if (DWInteractions[j][v] == 1) {
-                    previous = j;
-                    break;
-                }
-            }
-            if (track == 0 && b == false) {
-                DFSUtil(previous, visited, userID2, theList,track);
-
-            } else {
-                System.out.println("end");
             }
         }
     }
-
 
 
     /* ------- Task 4 ------- */
@@ -704,8 +696,28 @@ public class DWInteractionGraph {
      * @return the maximum number of users that can be polluted in N hours
      */
     public int MaxBreachedUserCount(int hours) {
-        // TODO: Implement this method
-        return 0;
+        int seconds = 3600*hours;
+        int totalUsers = 0;
+        int temp = 0;
+        for(int i : realSender) {
+            int start = realTime.get(i);
+            int end = start + seconds;
+            int endUser = 0;
+            for (int j = i; j < realTime.size(); j++) {
+                if (realTime.get(j) <= end) {
+                    endUser = j;
+                } else
+                    break;
+            }
+            //Gets the size of the output array of BFS
+            List<Integer> CheckSize = BFS(i, endUser);
+            temp = CheckSize.size();
+
+            if (temp >= totalUsers) {
+                totalUsers = temp;
+            }
+        }
+        return totalUsers;
     }
 
 }
