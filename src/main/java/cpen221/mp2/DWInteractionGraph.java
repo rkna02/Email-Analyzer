@@ -423,6 +423,10 @@ public class DWInteractionGraph {
                     userIdsList.add(userIdsArray[i]);
                 }
             }
+            if (N > userIdsList.size()) {
+                return -1;
+            }
+
             //Find the mostInteractions done by a user
             for (int i = 0; i < userIdsList.size(); i++) {
                 if (ReportOnUser(userIdsList.get(i))[0] > mostSentEmails) {
@@ -463,6 +467,9 @@ public class DWInteractionGraph {
                     userIdsList.add(userIdsArray[i]);
                 }
             }
+            if (N > userIdsList.size()) {
+                return -1;
+            }
 
             //Find the mostInteractions done by a user
             for (int i = 0; i < userIdsList.size(); i++) {
@@ -492,12 +499,8 @@ public class DWInteractionGraph {
                 mostReceivedEmails = nextMostReceivedEmails;
             }
         }
+        return userRanks.get(N - 1);
 
-        if (N > userIdsList.size()) {
-            return -1;
-        } else {
-            return userRanks.get(N - 1);
-        }
     }
 
     /* ------- Task 3 ------- */
