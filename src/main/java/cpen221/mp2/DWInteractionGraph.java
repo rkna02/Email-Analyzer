@@ -331,7 +331,7 @@ public class DWInteractionGraph {
 
         Set<Integer> senderSet = new HashSet<>();
         Set<Integer> receiverSet = new HashSet<>();
-        Set<Integer> timeSet = new HashSet<>();
+        List<Integer> timeList = new ArrayList<>();
 
         int[] reportNum = new int[3];
 
@@ -343,13 +343,13 @@ public class DWInteractionGraph {
                 if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
                     senderSet.add(realSender.get(i));
                     receiverSet.add((realReceiver.get(i)));
-                    timeSet.add(realTime.get(i));
+                    timeList.add(realTime.get(i));
                 }
             }
         }
         reportNum[0] = senderSet.size();
         reportNum[1] = receiverSet.size();
-        reportNum[2] = timeSet.size();
+        reportNum[2] = timeList.size();
 
         return reportNum;
     }
