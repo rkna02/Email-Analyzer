@@ -482,7 +482,8 @@ public class UDWInteractionGraph {
      *
      * @param rootUser the user ID to start the search with
      * @return An arrayList of visited user IDs after a Breadth First Search
-     *
+     *         If no users have interactions with rootUser, or if rootUser does not exist, 
+     *         returns empty List.
      */
     private List<Integer> UDWGraphBFS(int rootUser) {
 
@@ -492,9 +493,8 @@ public class UDWInteractionGraph {
 
         //Initialize queue and boolean array for keeping track of the search path
         boolean[] visitedUser = new boolean[userIds.size() + 1];
-        LinkedList<Integer> queue = new LinkedList<Integer>();
-
-        //Store visited users in an ArrayList
+        Queue<Integer> queue = new LinkedList<Integer>();
+        
         ArrayList<Integer> graphComponents = new ArrayList<>();
 
         //Add the root user to the beginning of the queue
@@ -518,8 +518,12 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * Finds the number of completely disjoint graph
+     * components in the UDWInteractionGraph object.
+     * 
      * @return the number of completely disjoint graph
-     *    components in the UDWInteractionGraph object.
+     *         components in the UDWInteractionGraph object.
+     * effects: number returned >= 0;
      */
     public int NumberOfComponents() {
         //Convert the set of userIds to an array for accessing inner elements
@@ -540,9 +544,13 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * Tests whether a path exists between two users in an adjacency list
+     *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
-     * @return whether a path exists between the two users
+     * @return true if a path exists between the two users.
+     *         false if a path does not exist between the two users.
+     *         false if userID1 or/and userID2 does not exist in file.
      */
     public boolean PathExists(int userID1, int userID2) {
         if (this.UDWGraphBFS(userID1).contains(userID2)) {
