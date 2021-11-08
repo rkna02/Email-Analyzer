@@ -39,6 +39,24 @@ public class DWInteractionGraph {
     //  realTime.get(1) represents a send time of the 1st Email (in seconds)
     //
 
+    /**
+     * Checks the representation invariant.
+     *
+     * effects: no effects if this satisfies rep invariant,
+     * 		    otherwise throws a runtime exception.
+     */
+    private void checkRep() {
+        if (realSenders.size() != realReceivers.size() ||
+            realReceivers.size() != realTime.size() ||
+            realSenders.size() != realTime.size()) {
+            throw new RuntimeException("missing data from file");
+        }
+        for (int time: realTime) {
+            if (time < 0) {
+                throw new RuntimeException("time out of bounds");
+            }
+        }
+    }
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file with a time filter.
