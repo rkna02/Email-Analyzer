@@ -377,6 +377,70 @@ public class AdditionalTestsAllTasks {
     }
   
     
+    /** Task 3 DW Tests */
+    @Test
+    public void testBFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.BFS(1, 8));
+    }
+
+    @Test
+    public void testDFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.DFS(1, 8));
+    }
+
+    @Test
+    public void testBFSNoPath() {
+        Assertions.assertEquals(null, dwig2a.BFS(2,8));
+    }
+
+    @Test
+    public void testDFSNoPath() {
+        Assertions.assertEquals(null, dwig2a.DFS(2,8));
+    }
+
+    @Test
+    public void testBFSSameUser() {
+        List<Integer> expected = Arrays.asList(2);
+        Assertions.assertEquals(expected, dwig2a.BFS(2, 2));
+    }
+
+    @Test
+    public void testDFSSameUser() {
+        List<Integer> expected = Arrays.asList(3);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 3));
+    }
+
+    @Test
+    public void testBFSGraph1() {
+        List<Integer> expected = Arrays.asList(1, 3, 5, 6, 4, 8, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.BFS(1, 10));
+    }
+
+    @Test
+    public void testDFSGraph1() {
+        List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.DFS(1, 10));
+    }
+
+    @Test
+    public void testBFSGraph2() {
+        List<Integer> expected = Arrays.asList(3, 1, 4, 8, 5, 6);
+        Assertions.assertEquals(expected, dwig2a.BFS(3, 6));
+    }
+
+    @Test
+    public void testDFSGraph2() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2, 9, 10, 6);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 6));
+    }
+
+    @Test
+    public void testDFSGraph3() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 2));
+    }
+
+    
     /** Task 3 UDW tests */
     @Test
     public void UDWtestNumComponent1() {
@@ -487,4 +551,4 @@ public class AdditionalTestsAllTasks {
         // in a 6-hour-long window after the attack starts.
         Assertions.assertEquals(5, dwig3c.MaxBreachedUserCount(6));
     }
-  
+}
