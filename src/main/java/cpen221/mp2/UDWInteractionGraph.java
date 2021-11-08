@@ -1,6 +1,7 @@
 package cpen221.mp2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -61,8 +62,9 @@ public class UDWInteractionGraph {
         UDWInteractionGraph obj = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt");
         UDWInteractionGraph obj2 = new UDWInteractionGraph(obj, arr);
         UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
-        UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task3-components-test.txt");
-        UDWInteractionGraph obj4 = new UDWInteractionGraph(obj, list);
+        UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task3Transactions1.txt");
+        UDWInteractionGraph obj4 = new UDWInteractionGraph(obj3, new int[]{0,0});
+         System.out.println(obj4.userIds.size());
 
     }
 
@@ -320,7 +322,6 @@ public class UDWInteractionGraph {
      *                   should exclude those emails in the input
      *                   UDWInteractionGraph for which neither the sender
      *                   nor the receiver exist in userFilter.
-     * requires:         List is not null
      * effects:          Creates a new UDWInteraction graph where
      *                   the size of the new UDWInteractionGraph is less than or equal to
      *                   the size of inputUDWIG.
@@ -423,7 +424,7 @@ public class UDWInteractionGraph {
                 Collections.sort(UDWInteractions[i]);
             }
         }
-        
+
         checkRep();
     }
 
@@ -474,9 +475,8 @@ public class UDWInteractionGraph {
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
         UDWInteractionGraph graphInTimeWindow = new UDWInteractionGraph(this, timeWindow);
-        Set<Integer> numUsersSet = graphInTimeWindow.getUserIDs();
         int[] data = new int[2];
-        int numUsers = numUsersSet.size();
+        int numUsers = graphInTimeWindow.userIds.size();
         int numEmails = graphInTimeWindow.allSenders.size();
 
         data[0] = numUsers;
@@ -502,15 +502,17 @@ public class UDWInteractionGraph {
         int numUsers = 0;
         int[] data = new int[2];
 
-        if (!this.allSenders.contains(userID) && !this.allSenders.contains(userID)) {
+        if (!allSenders.contains(userID) && !allReceivers.contains(userID)) {
             return new int[]{0, 0};
         } else {
-            for (int i = 0; i < this.allSenders.size(); i++) {
-                if (this.allSenders.get(i) == userID) {
+            for (int i = 0; i < allSenders.size(); i++) {
+                if (allSenders.get(i) == userID && allReceivers.get(i) == userID) {
+                    numEmails++;
+                    numUsersSet.add(allSenders.get(i));
+                } else if (allSenders.get(i) == userID) {
                     numEmails++;
                     numUsersSet.add(allReceivers.get(i));
-                }
-                if (this.allReceivers.get(i) == userID) {
+                } else if (allReceivers.get(i) == userID) {
                     numEmails++;
                     numUsersSet.add(allSenders.get(i));
                 }
@@ -528,7 +530,7 @@ public class UDWInteractionGraph {
      * The user is more active if they send or/and receive more Emails.
      *
      * @param N a positive number representing rank. N=1 means the most active.
-     * requires: N must be > 0
+     * requires: N must be >= 1
      * @return the User ID for the Nth most active user.
      *         If two or more users sends or receivers the same number of Emails (same rank),
      *         returns the user with the smallest user ID
@@ -537,48 +539,49 @@ public class UDWInteractionGraph {
      */
     public int NthMostActiveUser(int N) {
         //Convert the set of userIds to an array for accessing inner elements
-        Integer[] userIdsArray = new Integer[this.userIds.size()];
-        this.userIds.toArray(userIdsArray);
+        Integer[] userIdsArray = new Integer[userIds.size()];
+        userIds.toArray(userIdsArray);
 
-        List<List<Integer>> userRanks = new ArrayList<>();
+        List<Integer> userRanks = new ArrayList<>();
         int mostInteractions = 0;
         int nextMostInteractions = 0;
         int rankedUsers = 0;
 
         //Find the mostInteractions done by a user
-        for (int i = 0; i < this.getUserIDs().size(); i++) {
-            if (this.ReportOnUser(i)[0] > mostInteractions) {
-                mostInteractions = this.ReportOnUser(i)[0];
+        for (int i = 0; i < userIds.size(); i++) {
+            if (ReportOnUser(userIdsArray[i])[0] > mostInteractions) {
+                mostInteractions = ReportOnUser(userIdsArray[i])[0];
             }
         }
 
-        //Create a List of Lists with user rankings at every Nth rank
-        while (rankedUsers < this.userIds.size()) {
+        //Create a List of user rankings at every Nth rank
+        while (rankedUsers < userIds.size()) {
             List<Integer> NthRankUsers = new ArrayList<>();
-            for (int i = 0; i < this.userIds.size(); i++) {
-                if (this.ReportOnUser(i)[0] == mostInteractions) {
+            for (int i = 0; i < userIds.size(); i++) {
+                if (ReportOnUser(userIdsArray[i])[0] == mostInteractions) {
+                    System.out.println(ReportOnUser(userIdsArray[i])[0]);
                     NthRankUsers.add(userIdsArray[i]);
                     rankedUsers++;
                 }
             }
             Collections.sort(NthRankUsers);
-            userRanks.add(NthRankUsers);
+            userRanks.addAll(NthRankUsers);
 
             //Update mostInteractions
             nextMostInteractions = 0;
-            for (int i = 0; i < this.getUserIDs().size(); i++) {
-                if (this.ReportOnUser(i)[0] < mostInteractions &&
-                    this.ReportOnUser(i)[0] > nextMostInteractions) {
-                    nextMostInteractions = this.ReportOnUser(i)[0];
+            for (int i = 0; i < userIds.size(); i++) {
+                if (ReportOnUser(userIdsArray[i])[0] < mostInteractions &&
+                    ReportOnUser(userIdsArray[i])[0] > nextMostInteractions) {
+                    nextMostInteractions = ReportOnUser(userIdsArray[i])[0];
                 }
             }
             mostInteractions = nextMostInteractions;
         }
 
-        if (userRanks.get(N - 1) == null) {
+        if (N > userIdsArray.length) {
             return -1;
         } else {
-            return userRanks.get(N - 1).get(0);
+            return userRanks.get(N - 1);
         }
 
     }
