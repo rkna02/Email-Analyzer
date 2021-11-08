@@ -53,6 +53,231 @@ public class AdditionalTestsAllTasks {
 
     }
 
+    /** Task 2 DW tests */
+    @Test
+    public void DWReportActivityInTimeWindow1() {
+        int[] expected1 = new int[]{4, 4, 7};
+        int[] expected2 = new int[]{1, 1, 1};
+        Assertions.assertArrayEquals(expected1, dwig1a.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, dwig1a.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void DWReportActivityInTimeWindow2() {
+        int[] expected1 = new int[]{1, 1, 1};
+        int[] expected2 = new int[]{0, 0, 0};
+        Assertions.assertArrayEquals(expected1, dwig1b.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, dwig1b.ReportActivityInTimeWindow(new int[]{2, 3}));
+    }
+
+    @Test
+    public void DWReportActivityInTimeWindow3() {
+        int[] expected1 = new int[]{3, 2, 3};
+        int[] expected2 = new int[]{0, 0, 0};
+        Assertions.assertArrayEquals(expected1, dwig1c.ReportActivityInTimeWindow(new int[]{0, 3}));
+        Assertions.assertArrayEquals(expected2, dwig1c.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void DWReportActivityInTimeWindow4() {
+        int[] expected1 = new int[]{0, 0, 0};
+        int[] expected2 = new int[]{0, 0, 0};
+        Assertions.assertArrayEquals(expected1, dwig1d.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, dwig1d.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void DWReportActivityInTimeWindow5() {
+        int[] expected1 = new int[]{4, 3, 5};
+        int[] expected2 = new int[]{3, 2, 3};
+        Assertions.assertArrayEquals(expected1, dwig1e.ReportActivityInTimeWindow(new int[]{1, 2}));
+        Assertions.assertArrayEquals(expected2, dwig1e.ReportActivityInTimeWindow(new int[]{0, 1}));
+    }
+
+    @Test
+    public void DWReportOnUser1() {
+        Assertions.assertArrayEquals(new int[]{3, 0, 3}, dwig1a.ReportOnUser(1));
+        Assertions.assertArrayEquals(new int[]{0, 2, 2}, dwig1a.ReportOnUser(6));
+    }
+
+    @Test
+    public void DWReportOnUser2() {
+        Assertions.assertArrayEquals(new int[]{0, 1, 1}, dwig1b.ReportOnUser(2));
+        Assertions.assertArrayEquals(new int[]{1, 0, 1}, dwig1b.ReportOnUser(1));
+    }
+
+    @Test
+    public void DWReportOnUser3() {
+        Assertions.assertArrayEquals(new int[]{0, 0, 0}, dwig1c.ReportOnUser(0));
+        Assertions.assertArrayEquals(new int[]{1, 1, 2}, dwig1c.ReportOnUser(4));
+    }
+
+    @Test
+    public void DWReportOnUser4() {
+        Assertions.assertArrayEquals(new int[]{0, 0, 0}, dwig1d.ReportOnUser(0));
+        Assertions.assertArrayEquals(new int[]{0, 0, 0}, dwig1d.ReportOnUser(1));
+    }
+
+    @Test
+    public void DWReportOnUser5() {
+        Assertions.assertArrayEquals(new int[]{1, 0, 1}, dwig1e.ReportOnUser(1));
+        Assertions.assertArrayEquals(new int[]{1, 1, 2}, dwig1e.ReportOnUser(4));
+    }
+
+    @Test
+    public void DWNthMostActiveUser1() {
+        Assertions.assertEquals(2, dwig1a.NthMostActiveUser(3, SendOrReceive.SEND));
+        Assertions.assertEquals(3, dwig1a.NthMostActiveUser(1, SendOrReceive.RECEIVE));
+    }
+
+    @Test
+    public void DWNthMostActiveUser2() {
+        Assertions.assertEquals(1, dwig1b.NthMostActiveUser(1, SendOrReceive.SEND));
+        Assertions.assertEquals(-1, dwig1b.NthMostActiveUser(2, SendOrReceive.SEND));
+        Assertions.assertEquals(2, dwig1b.NthMostActiveUser(1, SendOrReceive.RECEIVE));
+    }
+
+    @Test
+    public void DWNthMostActiveUser3() {
+        Assertions.assertEquals(3, dwig1c.NthMostActiveUser(2, SendOrReceive.SEND));
+        Assertions.assertEquals(1, dwig1c.NthMostActiveUser(1, SendOrReceive.SEND));
+        Assertions.assertEquals(4, dwig1c.NthMostActiveUser(2, SendOrReceive.RECEIVE));
+    }
+
+    @Test
+    public void DWNthMostActiveUser4() {
+        Assertions.assertEquals(-1, dwig1d.NthMostActiveUser(1, SendOrReceive.SEND));
+        Assertions.assertEquals(-1, dwig1d.NthMostActiveUser(3, SendOrReceive.RECEIVE));
+    }
+
+    @Test
+    public void DWNthMostActiveUser5() {
+        Assertions.assertEquals( 1, dwig1e.NthMostActiveUser(2, SendOrReceive.SEND));
+        Assertions.assertEquals( 2, dwig1e.NthMostActiveUser(3, SendOrReceive.SEND));
+        Assertions.assertEquals( 4, dwig1e.NthMostActiveUser(3, SendOrReceive.RECEIVE));
+    }
+
+    /** Task 2 UDW tests */
+    @Test
+    public void UDWReportActivityInTimeWindow1() {
+        int[] expected1 = new int[]{5, 7};
+        int[] expected2 = new int[]{2, 1};
+        Assertions.assertArrayEquals(expected1, udwig1a.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, udwig1a.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void UDWReportActivityInTimeWindow2() {
+        int[] expected1 = new int[]{2, 1};
+        int[] expected2 = new int[]{0, 0};
+        Assertions.assertArrayEquals(expected1, udwig1b.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, udwig1b.ReportActivityInTimeWindow(new int[]{2, 3}));
+    }
+
+    @Test
+    public void UDWReportActivityInTimeWindow3() {
+        int[] expected1 = new int[]{4, 3};
+        int[] expected2 = new int[]{0, 0};
+        Assertions.assertArrayEquals(expected1, udwig1c.ReportActivityInTimeWindow(new int[]{0, 3}));
+        Assertions.assertArrayEquals(expected2, udwig1c.ReportActivityInTimeWindow(new int[]{0, 1}));
+    }
+
+    @Test
+    public void UDWReportActivityInTimeWindow4() {
+        int[] expected1 = new int[]{0, 0};
+        int[] expected2 = new int[]{0, 0};
+        Assertions.assertArrayEquals(expected1, udwig1d.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, udwig1d.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void UDWReportActivityInTimeWindow5() {
+        int[] expected1 = new int[]{5, 5};
+        int[] expected2 = new int[]{4, 3};
+        Assertions.assertArrayEquals(expected1, udwig1e.ReportActivityInTimeWindow(new int[]{1, 2}));
+        Assertions.assertArrayEquals(expected2, udwig1e.ReportActivityInTimeWindow(new int[]{0, 1}));
+    }
+
+    @Test
+    public void UDWReportActivityInTimeWindow6() {
+        int[] expected1 = new int[]{5, 7};
+        int[] expected2 = new int[]{2, 1};
+        Assertions.assertArrayEquals(expected1, udwig1f.ReportActivityInTimeWindow(new int[]{0, 2}));
+        Assertions.assertArrayEquals(expected2, udwig1f.ReportActivityInTimeWindow(new int[]{0, 0}));
+    }
+
+    @Test
+    public void UDWReportOnUser1() {
+        Assertions.assertArrayEquals(new int[]{3, 3}, udwig1a.ReportOnUser(1));
+        Assertions.assertArrayEquals(new int[]{2, 2}, udwig1a.ReportOnUser(6));
+    }
+
+    @Test
+    public void UDWReportOnUser2() {
+        Assertions.assertArrayEquals(new int[]{1, 1}, udwig1b.ReportOnUser(2));
+        Assertions.assertArrayEquals(new int[]{1, 1}, udwig1b.ReportOnUser(1));
+    }
+
+    @Test
+    public void UDWReportOnUser3() {
+        Assertions.assertArrayEquals(new int[]{0, 0}, udwig1c.ReportOnUser(0));
+        Assertions.assertArrayEquals(new int[]{2, 2}, udwig1c.ReportOnUser(4));
+    }
+
+    @Test
+    public void UDWReportOnUser4() {
+        Assertions.assertArrayEquals(new int[]{0, 0}, udwig1d.ReportOnUser(0));
+        Assertions.assertArrayEquals(new int[]{0, 0}, udwig1d.ReportOnUser(1));
+    }
+
+    @Test
+    public void UDWReportOnUser5() {
+        Assertions.assertArrayEquals(new int[]{1, 1}, udwig1e.ReportOnUser(1));
+        Assertions.assertArrayEquals(new int[]{2, 2}, udwig1e.ReportOnUser(4));
+    }
+
+    @Test
+    public void UDWReportOnUser6() {
+        Assertions.assertArrayEquals(new int[]{3, 3}, udwig1f.ReportOnUser(1));
+        Assertions.assertArrayEquals(new int[]{2, 2}, udwig1f.ReportOnUser(6));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser1() {
+        Assertions.assertEquals(3, udwig1a.NthMostActiveUser(1));
+        Assertions.assertEquals(1, udwig1a.NthMostActiveUser(2));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser2() {
+        Assertions.assertEquals(1, udwig1b.NthMostActiveUser(1));
+        Assertions.assertEquals(-1, udwig1b.NthMostActiveUser(3));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser3() {
+        Assertions.assertEquals(4, udwig1c.NthMostActiveUser(1));
+        Assertions.assertEquals(1, udwig1c.NthMostActiveUser(3));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser4() {
+        Assertions.assertEquals(-1, udwig1d.NthMostActiveUser(2));
+        Assertions.assertEquals(-1, udwig1d.NthMostActiveUser(3));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser5() {
+        Assertions.assertEquals(3, udwig1e.NthMostActiveUser(1));
+        Assertions.assertEquals(2, udwig1e.NthMostActiveUser(5));
+    }
+
+    @Test
+    public void UDWNthMostActiveUser6() {
+        Assertions.assertEquals(3, udwig1f.NthMostActiveUser(1));
+        Assertions.assertEquals(1, udwig1f.NthMostActiveUser(2));
+    }
+
     /** Task 1 DW tests */
     @Test
     public void DWTestConstruction1() {
@@ -143,11 +368,6 @@ public class AdditionalTestsAllTasks {
         Assertions.assertEquals(0, udwig1f.getEmailCount(0, 6));
         Assertions.assertEquals(0, udwig1f.getEmailCount(1, 6));
     }
-
-
-    /** Task 2 DW tests */
-
-    /** Task 2 UDW tests */
 
     /** Task 3 DW tests */
 
