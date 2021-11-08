@@ -420,7 +420,7 @@ public class DWInteractionGraph {
         getUserIDs().toArray(userIdsArray);
 
         List<Integer> userIdsList = new ArrayList<>();
-        List<List<Integer>> userRanks = new ArrayList<>();
+        List<Integer> userRanks = new ArrayList<>();
 
         if (interactionType == SendOrReceive.SEND) {
             int mostSentEmails = 0;
@@ -432,6 +432,10 @@ public class DWInteractionGraph {
                     userIdsList.add(userIdsArray[i]);
                 }
             }
+            if (N > userIdsList.size()) {
+                return -1;
+            }
+
             //Find the mostInteractions done by a user
             for (int i = 0; i < userIdsList.size(); i++) {
                 if (ReportOnUser(userIdsList.get(i))[0] > mostSentEmails) {
@@ -449,13 +453,13 @@ public class DWInteractionGraph {
                     }
                 }
                 Collections.sort(NthRankUsers);
-                userRanks.add(NthRankUsers);
+                userRanks.addAll(NthRankUsers);
 
                 //Update mostInteractions
                 nextMostSentEmails = 0;
                 for (int i = 0; i < userIdsList.size(); i++) {
                     if (ReportOnUser(userIdsList.get(i))[0] < mostSentEmails &&
-                            ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
+                        ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
                         nextMostSentEmails = ReportOnUser(userIdsList.get(i))[0];
                     }
                 }
@@ -472,6 +476,10 @@ public class DWInteractionGraph {
                     userIdsList.add(userIdsArray[i]);
                 }
             }
+            if (N > userIdsList.size()) {
+                return -1;
+            }
+
             //Find the mostInteractions done by a user
             for (int i = 0; i < userIdsList.size(); i++) {
                 if (ReportOnUser(userIdsList.get(i))[1] > mostReceivedEmails) {
@@ -487,27 +495,21 @@ public class DWInteractionGraph {
                     }
                 }
                 Collections.sort(NthRankUsers);
-                userRanks.add(NthRankUsers);
+                userRanks.addAll(NthRankUsers);
 
                 //Update mostInteractions
                 nextMostReceivedEmails = 0;
                 for (int i = 0; i < userIdsList.size(); i++) {
                     if (ReportOnUser(userIdsList.get(i))[1] < mostReceivedEmails &&
-                            ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
+                        ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
                         nextMostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
                     }
                 }
                 mostReceivedEmails = nextMostReceivedEmails;
             }
         }
+        return userRanks.get(N - 1);
 
-        if (N > userRanks.size()) {
-            return -1;
-        } else if (userRanks.get(N - 1).size() == 0){
-            return -1;
-        } else {
-            return userRanks.get(N - 1).get(0);
-        }
     }
 
     /* ------- Task 3 ------- */
