@@ -379,7 +379,6 @@ public class DWInteractionGraph {
                     }
                 }
             }
-
         return BFS;
     }
 
