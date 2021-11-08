@@ -401,12 +401,12 @@ public class DWInteractionGraph {
         while(!queue.isEmpty()){
             int presentNode = queue.poll();
             BFS.add(presentNode);
-            int nextNode = 0;
+            int nextNode;
 
             //Visit and add all unvisited neighbors to the queue
-            while(((nextNode = unvisited(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
-                queue.add(nextNode);
+            while(((nextNode = neighbourNodes(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
                 visited[nextNode] = 1;
+                queue.add(nextNode);
             }
 
             if (nextNode == user2) {
@@ -420,7 +420,7 @@ public class DWInteractionGraph {
         return BFS;
     }
 
-    private int unvisited(int presentNode, int graph [][], int visited[], int user2){
+    private int neighbourNodes(int presentNode, int graph [][], int visited[], int user2){
         for(int index = 0; index < graph.length; index++){
             if(visited[index] == 0 && graph[presentNode][index] == 1){
                 return index;

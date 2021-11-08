@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class AdditionalTestsAllTasks {
         udwig2d = new UDWInteractionGraph(udwig2a, List.of(5));
         udwig2e = new UDWInteractionGraph(udwig2a, Arrays.asList(0, 2, 3));
         udwig2f = new UDWInteractionGraph(dwig2a);
+
 
     }
 
@@ -150,8 +152,43 @@ public class AdditionalTestsAllTasks {
     /** Task 2 UDW tests */
 
     /** Task 3 DW tests */
+    @Test
+    public void testBFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.BFS(1, 8));
+    }
 
-    /** Task 3 UDW tests */
+    @Test
+    public void testDFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.DFS(1, 8));
+    }
 
-    /** Task 4 DW tests */
+    @Test
+    public void testBFSSameUser() {
+        List<Integer> expected = Arrays.asList(2);
+        Assertions.assertEquals(expected, dwig2a.BFS(2, 2));
+    }
+
+    @Test
+    public void testDFSSameUser() {
+        List<Integer> expected = Arrays.asList(3);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 3));
+    }
+
+    @Test
+    public void testBFSGraph2() {
+        List<Integer> expected = Arrays.asList(1, 3, 5, 6, 4, 8, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.BFS(1, 10));
+    }
+
+    @Test
+    public void testDFSGraph2() {
+        List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.DFS(1, 10));
+    }
 }
+
+
+/** Task 3 UDW tests */
+
+/** Task 4 DW tests */
+
