@@ -540,8 +540,8 @@ public class DWInteractionGraph {
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
-     * in the order encountered in the search.
-     * if no path exists, should return null.
+     *         in the order encountered in the search.
+     *         If no path exists, return null.
      */
     public List<Integer> BFS(int userID1, int userID2) {
         int user1 = userID1;
@@ -601,13 +601,14 @@ public class DWInteractionGraph {
     }
 
     /**
-     * Helper method: finds an adjacent node to the current node we are at
+     * Finds an adjacent node to another node 
      *
      * @param presentNode the node/vertex we are currently at in the search
-     * @param graph Directedgraph created from given data
+     * @param graph DirectedWeightedgraph created from given data
      * @param visited An array which stores whether a node has been accessed
      * @param user2 the user ID for the second user
-     * @return if a path exists, returns the index of an adjacent node
+     * @return If a path exists, returns the index of an adjacent node
+     *         else, returns -1.
      */
     private int neighbourNodes(int presentNode, int graph [][], int visited[], int user2){
         //Loops through all UserIds to see if there is an interaction
@@ -624,14 +625,14 @@ public class DWInteractionGraph {
     }
 
     /**
-     * performs depth first search on the DWInteractionGraph object
+     * Performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
      *
      * @param userID1 the user ID for the first user
      * @param userID2 the user ID for the second user
      * @return if a path exists, returns aa list of user IDs
-     * in the order encountered in the search.
-     * if no path exists, should return null.
+     *         in the order encountered in the search.
+     *         If no path exists, should return null.
      */
     public List<Integer> DFS(int userID1, int userID2) {
         Set<Integer> size = new HashSet<>();
@@ -661,13 +662,14 @@ public class DWInteractionGraph {
     }
 
     /**
-     * helper method as an intermediate step of DFS algorithm
-     * set up the node visit history array
+     * sets up a boolean array that stores the visited nodes in a search
+     * Array element = true if the node at index has been visited,
+     * Array element = false if the node at index has not been visited.
      *
-     * @param start means userId1
-     * @param S is number of vertices+1
-     * @param userID2 destination that we are hunting down
-     * @param theList the order of DFS
+     * @param start A userId to start the search with
+     * @param S The number of vertices + 1
+     * @param userID2 The destination userId to find a path to
+     * @param theList The order of DFS
      */
     void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
