@@ -46,9 +46,9 @@ public class DWInteractionGraph {
      * 		    otherwise throws a runtime exception.
      */
     private void checkRep() {
-        if (realSenders.size() != realReceivers.size() ||
-            realReceivers.size() != realTime.size() ||
-            realSenders.size() != realTime.size()) {
+        if (realSender.size() != realReceiver.size() ||
+            realReceiver.size() != realTime.size() ||
+            realSender.size() != realTime.size()) {
             throw new RuntimeException("missing data from file");
         }
         for (int time: realTime) {
@@ -64,7 +64,7 @@ public class DWInteractionGraph {
      *
      * @param fileName the name of the file in the resources
      *                 directory containing email interactions
-     * @param timeFilter an integer array of length 2: [t0, t1]
+     * @param timeWindow an integer array of length 2: [t0, t1]
      *                   where t0 <= t1. The created UDWInteractionGraph
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
@@ -158,7 +158,7 @@ public class DWInteractionGraph {
      * Ensures Senders, Receivers, and Time are holding the correct data
      *
      * @param sender a list which holds all senders
-     * @param recevier a list which holds all receivers
+     * @param receiver a list which holds all receivers
      * @param time a list which holds the time at each email interaction
      * @param Etext
      */
