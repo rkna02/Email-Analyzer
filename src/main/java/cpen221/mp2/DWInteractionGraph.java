@@ -300,8 +300,8 @@ public class DWInteractionGraph {
         }
         return emailCount;
     }
-    
-    
+
+
     List<Integer> getRealSender() {
         return this.realSender;
     }
@@ -450,7 +450,7 @@ public class DWInteractionGraph {
                 nextMostSentEmails = 0;
                 for (int i = 0; i < userIdsList.size(); i++) {
                     if (ReportOnUser(userIdsList.get(i))[0] < mostSentEmails &&
-                        ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
+                            ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
                         nextMostSentEmails = ReportOnUser(userIdsList.get(i))[0];
                     }
                 }
@@ -492,7 +492,7 @@ public class DWInteractionGraph {
                 nextMostReceivedEmails = 0;
                 for (int i = 0; i < userIdsList.size(); i++) {
                     if (ReportOnUser(userIdsList.get(i))[1] < mostReceivedEmails &&
-                        ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
+                            ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
                         nextMostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
                     }
                 }
@@ -574,19 +574,19 @@ public class DWInteractionGraph {
      * Finds an adjacent node to the current node we are at
      *
      * @param presentNode the node/vertex we are currently at in the search
-     * @param graph Directedgraph created from given data
-     * @param visited An array which stores whether a node has been accessed
-     * @param user2 the user ID for the second user
+     * @param graph       Directedgraph created from given data
+     * @param visited     An array which stores whether a node has been accessed
+     * @param user2       the user ID for the second user
      * @return if a path exists, returns the index of an adjacent node
      */
-    private int neighbourNodes(int presentNode, int graph [][], int visited[], int user2){
+    private int neighbourNodes(int presentNode, int graph[][], int visited[], int user2) {
         //Loops through all UserIds to see if there is an interaction
-        for(int index = 0; index < graph.length; index++){
-            if(visited[index] == 0 && graph[presentNode][index] == 1){
+        for (int index = 0; index < graph.length; index++) {
+            if (visited[index] == 0 && graph[presentNode][index] == 1) {
                 return index;
             }
 
-            if(index == user2 && graph[presentNode][index] == 1) {
+            if (index == user2 && graph[presentNode][index] == 1) {
                 return user2;
             }
         }
@@ -616,16 +616,16 @@ public class DWInteractionGraph {
         List<Integer> theList = new ArrayList<>();
         theList.add(userID1);
         DFS1(userID1, max + 1, userID2, theList);
-        List<Integer> thereturnone= new ArrayList<>();
-        boolean havenorNot= false;
-        for(int k=0; k < theList.size();k++){
+        List<Integer> thereturnone = new ArrayList<>();
+        boolean havenorNot = false;
+        for (int k = 0; k < theList.size(); k++) {
             thereturnone.add(theList.get(k));
-            if(theList.get(k) == userID2){
+            if (theList.get(k) == userID2) {
                 havenorNot = true;
                 break;
             }
         }
-        if (havenorNot==true) {
+        if (havenorNot == true) {
             return thereturnone;
         }
         return null;
@@ -634,7 +634,7 @@ public class DWInteractionGraph {
     // v is number of vertices
     void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
-        int [][]array2 = new int[array1.length][array1.length];
+        int[][] array2 = new int[array1.length][array1.length];
         boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
 
         DFSUtil(start, visited, userID2, theList);
@@ -643,25 +643,18 @@ public class DWInteractionGraph {
     void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList) {
         // mark the current node as visited
         // and add the node to the return list
-            visited[v] = true;
-            for (int i = 0; i < array1.length; i++) {
-                if (array1[v][i] == 1) {
-                    if (i == userID2) {
-
-                        theList.add(i);
-
-                        break;
-                    }
-                    else if (!visited[i]) {
-                        theList.add(i);
-
-                        DFSUtil(i, visited, userID2, theList);
-
-
-                    }
+        visited[v] = true;
+        for (int i = 0; i < array1.length; i++) {
+            if (array1[v][i] == 1) {
+                if (i == userID2) {
+                    theList.add(i);
+                    break;
+                } else if (!visited[i]) {
+                    theList.add(i);
+                    DFSUtil(i, visited, userID2, theList);
                 }
+            }
         }
-
     }
 
 
