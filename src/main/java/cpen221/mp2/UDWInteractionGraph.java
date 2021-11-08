@@ -53,21 +53,6 @@ public class UDWInteractionGraph {
     //  allSendTimes.get(1) represents the send time of the 1st Email (in seconds)
     //
 
-     public static void main(String[] args) {
-        int[] arr = {10, 11};
-        int[] arr2 = {0, 2};
-        List<Integer> list = new ArrayList<>();
-        list.add(0);
-        list.add(1);
-        UDWInteractionGraph obj = new UDWInteractionGraph("resources/Task1-2UDWTransactions.txt");
-        UDWInteractionGraph obj2 = new UDWInteractionGraph(obj, arr);
-        UDWInteractionGraph obj5 = new UDWInteractionGraph(obj, arr2);
-        UDWInteractionGraph obj3 = new UDWInteractionGraph("resources/Task3Transactions1.txt");
-        UDWInteractionGraph obj4 = new UDWInteractionGraph(obj3, new int[]{0,0});
-         System.out.println(obj4.userIds.size());
-
-    }
-
     /* ------- Task 1 ------- */
     /* Building the Constructors */
 
