@@ -300,6 +300,19 @@ public class DWInteractionGraph {
         }
         return emailCount;
     }
+    
+    
+    List<Integer> getRealSender() {
+        return this.realSender;
+    }
+
+    List<Integer> getRealReceiver() {
+        return this.realReceiver;
+    }
+
+    List<Integer> getRealTime() {
+        return this.realTime;
+    }
 
     /* ------- Task 2 ------- */
 
