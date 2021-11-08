@@ -8,11 +8,19 @@ import java.util.*;
 public class DWInteractionGraph {
 
     /* ------- Task 1 ------- */
-    /* Building the Constructors */
+    /** Concrete Representation */
 
-    /*
-    RI: array1 cannot be greater than the size of all the vertices,
-        and it only contains zero and one.
+    /** An adjacency matrix made of a 2D array */
+    private int[][] DWInteractions; // adjacency matrix
+
+    /** Lists of senders, receivers, and the time sent for all Emails */
+    private List<Integer> realSender;
+    private List<Integer> realReceiver;
+    private List<Integer> realTime;
+
+    //Representation Invariant:
+    //  (realSender.size() == realReceiver.size() && realReceiver.size() == realTime.size())
+    //  realTime[i] >= 0, for 0 <= i < realTime.size()
 
     //Abstract Function:
     //  Graph interactions represented by a 2D adjacency matrix:
@@ -30,15 +38,6 @@ public class DWInteractionGraph {
     //  realReceiver.get(3) represents the receiver of the 3rd Email
     //  realTime.get(1) represents a send time of the 1st Email (in seconds)
     //
-
-    //private int emailCount; // count of email sent from specified sender to specified receiver
-    //private Set<Integer> idSet ; // the ID Set of a graph
-    */
-
-    private int[][] DWInteractions; // adjacency matrix
-    private List<Integer> realSender;
-    private List<Integer> realReceiver;
-    private List<Integer> realTime;
 
 
     /**
@@ -103,6 +102,13 @@ public class DWInteractionGraph {
 
     }
 
+    /**
+     * Reads a file given a file name and the data stored inside it
+     *
+     * @param Etext      Data within the file
+     * @param fileName   the name of the file in the resources
+     *                   directory containing email interactions
+     */
     private void reader(String fileName, StringBuilder Etext) {
         try {
 
@@ -125,6 +131,14 @@ public class DWInteractionGraph {
         }
     }
 
+    /**
+     * Ensures Senders, Receivers, and Time are holding the correct data
+     *
+     * @param sender a list which holds all senders
+     * @param recevier a list which holds all receivers
+     * @param time a list which holds the time at each email interaction
+     * @param Etext
+     */
     private void helper(List sender, List receiver, List time, StringBuilder Etext) {
         List<Integer> xx = new ArrayList<>();
 
@@ -160,7 +174,6 @@ public class DWInteractionGraph {
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
-        // TODO: Implement this constructor
 
         List<Integer> sender = new ArrayList<>(); // a List of sender info
         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
@@ -213,7 +226,6 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
-        // TODO: Implement this constructor
         realSender = new ArrayList<>();
         realReceiver = new ArrayList<>();
         realTime = new ArrayList<>();
@@ -233,10 +245,6 @@ public class DWInteractionGraph {
 
             }
         }
-
-//        this.realSender = new ArrayList<>(inputDWIG.realSender);
-//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
-//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -250,7 +258,6 @@ public class DWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
-        // TODO: Implement this constructor
         realSender = new ArrayList<>();
         realReceiver = new ArrayList<>();
         realTime = new ArrayList<>();
@@ -270,10 +277,6 @@ public class DWInteractionGraph {
                 realTime.add(inputDWIG.realTime.get(i));
             }
         }
-
-//        this.realSender = new ArrayList<>(inputDWIG.realSender);
-//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
-//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -281,7 +284,6 @@ public class DWInteractionGraph {
      * in this DWInteractionGraph.
      */
     public Set<Integer> getUserIDs() {
-        // TODO: Implement this getter method
         Set<Integer> idSet = new HashSet<>();
 
         for (int i = 0; i < DWInteractions.length; i++) {
@@ -303,7 +305,6 @@ public class DWInteractionGraph {
      * receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
-        // TODO: Implement this getter method
 
         int emailCount = 0;
         for (int i = 0; i < realSender.size(); i++) {
@@ -339,7 +340,6 @@ public class DWInteractionGraph {
      */
 
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
-        // TODO: Implement this method
 
         Set<Integer> senderSet = new HashSet<>();
         Set<Integer> receiverSet = new HashSet<>();
@@ -374,7 +374,6 @@ public class DWInteractionGraph {
      * returns [0, 0, 0].
      */
     public int[] ReportOnUser(int userID) {
-        // TODO: Implement this method
         int[] theOne = new int[3];
 
         List<Integer> unique = new ArrayList<>();
@@ -582,7 +581,7 @@ public class DWInteractionGraph {
     }
 
     /**
-     * Finds an adjacent node to the current node we are at
+     * Helper method: finds an adjacent node to the current node we are at
      *
      * @param presentNode the node/vertex we are currently at in the search
      * @param graph Directedgraph created from given data
@@ -615,7 +614,6 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> DFS(int userID1, int userID2) {
-        // TODO: Implement this method
         Set<Integer> size = new HashSet<>();
         for (Integer integer : realSender) {
             size.add(integer);
@@ -641,8 +639,6 @@ public class DWInteractionGraph {
         }
         return null;
     }
-
-
 
     /**
      * helper method as an intermediate step of DFS algorithm
