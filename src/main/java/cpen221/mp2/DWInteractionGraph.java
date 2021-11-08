@@ -356,7 +356,7 @@ public class DWInteractionGraph {
      *
      * @param timeWindow is an int array of size 2 [t0, t1] where t0<=t1.
      * @return an int array of length 3, with the following structure:
-     * [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
+     *         [NumberOfSenders, NumberOfReceivers, NumberOfEmailTransactions]
      */
 
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
@@ -389,9 +389,9 @@ public class DWInteractionGraph {
      * @param userID the User ID of the user for which the report will be
      *               created.
      * @return an int array of length 3 with the following structure:
-     * [NumberOfEmailsSent, NumberOfEmailsReceived, UniqueUsersInteractedWith]
-     * If the specified User ID does not exist in this instance of a graph,
-     * returns [0, 0, 0].
+     *         [NumberOfEmailsSent, NumberOfEmailsReceived, UniqueUsersInteractedWith]
+     *         If the specified User ID does not exist in this instance of a graph,
+     *         returns [0, 0, 0].
      */
     public int[] ReportOnUser(int userID) {
         int[] theOne = new int[3];
@@ -425,12 +425,14 @@ public class DWInteractionGraph {
     }
 
     /**
+     * Finds the most active Email sender or receiver 
+     * 
      * @param N               a positive number representing rank. N=1 means the most active.
      * @param interactionType Represent the type of interaction to calculate the rank for
      *                        Can be SendOrReceive.Send or SendOrReceive.RECEIVE
      * @return the User ID for the Nth most active user in specified interaction type.
-     * Sorts User IDs by their number of sent or received emails first. In the case of a
-     * tie, secondarily sorts the tied User IDs in ascending order.
+     *         Sorts User IDs by their number of sent or received emails first. 
+     *         In the case of a tie, secondarily sorts the tied User IDs in ascending order.
      */
 
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
@@ -680,9 +682,10 @@ public class DWInteractionGraph {
     }
 
     /**
-     *  DFS algorithm, stops when it finish searching its possibilities
+     * DFS algorithm, stops when it finish searching its possibilities
+     *
      * @param v the current node
-     * @param visited the array of nodes that are visited or not
+     * @param visited the boolean array that indicates visited nodes 
      * @param userID2 the destination node
      * @param theList the list of order of the visit
      */
