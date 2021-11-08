@@ -175,6 +175,18 @@ public class AdditionalTestsAllTasks {
     }
 
     @Test
+    public void testBFSNoPath() {
+
+        Assertions.assertEquals(null, dwig2a.BFS(2,8));
+    }
+
+    @Test
+    public void testDFSNoPath() {
+
+        Assertions.assertEquals(null, dwig2a.DFS(2,8));
+    }
+
+    @Test
     public void testBFSSameUser() {
         List<Integer> expected = Arrays.asList(2);
         Assertions.assertEquals(expected, dwig2a.BFS(2, 2));

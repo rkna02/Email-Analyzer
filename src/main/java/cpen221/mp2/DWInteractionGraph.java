@@ -572,6 +572,10 @@ public class DWInteractionGraph {
                 BFS.add(queue.poll());
             }
         }
+        //There exists a path
+        if (!BFS.contains(user2)) {
+            return null;
+        }
         return BFS;
     }
 
