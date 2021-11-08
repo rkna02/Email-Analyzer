@@ -314,15 +314,30 @@ public class DWInteractionGraph {
         }
         return emailCount;
     }
-
+    
+    /**
+     * Gets the user IDs of the senders of all Emails
+     *
+     * @return an arraylist of the senders of all Emails
+     */
     List<Integer> getRealSender() {
         return this.realSender;
     }
 
+    /**
+     * Gets the user IDs of the receivers of all Email
+     *
+     * @return an arraylist of the receivers of all Emails
+     */
     List<Integer> getRealReceiver() {
         return this.realReceiver;
     }
 
+    /**
+     * Gets the time of all the Emails sent
+     * 
+     * @return an arrayList of the times the Emails were sent
+     */
     List<Integer> getRealTime() {
         return this.realTime;
     }
