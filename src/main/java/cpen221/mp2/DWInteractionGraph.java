@@ -699,18 +699,18 @@ public class DWInteractionGraph {
         int seconds = 3600*hours;
         int totalUsers = 0;
         int temp = 0;
-        for(int i : realSender) {
+        for(int i = 0; i < realSender.size(); i++) {
             int start = realTime.get(i);
             int end = start + seconds;
             int endUser = 0;
             for (int j = i; j < realTime.size(); j++) {
                 if (realTime.get(j) <= end) {
-                    endUser = j;
+                    endUser = realReceiver.get(j);
                 } else
                     break;
             }
             //Gets the size of the output array of BFS
-            List<Integer> CheckSize = BFS(i, endUser);
+            List<Integer> CheckSize = BFS(realSender.get(i), endUser);
             temp = CheckSize.size();
 
             if (temp >= totalUsers) {
