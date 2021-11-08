@@ -420,6 +420,15 @@ public class DWInteractionGraph {
         return BFS;
     }
 
+    /**
+     * Finds an adjacent node to the current node we are at
+     *
+     * @param presentNode the node/vertex we are currently at in the search
+     * @param graph Directedgraph created from given data
+     * @param visited An array which stores whether a node has been accessed
+     * @param user2 the user ID for the second user
+     * @return if a path exists, returns the index of an adjacent node
+     */
     private int neighbourNodes(int presentNode, int graph [][], int visited[], int user2){
         for(int index = 0; index < graph.length; index++){
             if(visited[index] == 0 && graph[presentNode][index] == 1){
