@@ -37,16 +37,17 @@ public class DWInteractionGraph {
      *                   directory containing email interactions
      */
     public DWInteractionGraph(String fileName, int[] timeWindow) {
-        // TODO: Implement this constructor
-
         List<Integer> sender = new ArrayList<>(); // a List of sender info
         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
         List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
+        int largestSenderId = 0;
+        int largestReceiverId = 0;
+        int largestId = 0;
 
-        realSender = new ArrayList<>(sender);
-        realReceiver = new ArrayList<>(receiver);
-        realTime = new ArrayList<>(time);
+        realSender = new ArrayList<>();
+        realReceiver = new ArrayList<>();
+        realTime = new ArrayList<>();
 
         reader(fileName, Etext);
         helper(sender, receiver, time, Etext);
@@ -60,7 +61,20 @@ public class DWInteractionGraph {
             }
         }
 
-        array1 = new int[realSender.size()][realSender.size()];
+        //Find largest user id
+        if (realSender.size() > 0) {
+            largestSenderId = Collections.max(realSender);
+        }
+        if (realReceiver.size() > 0) {
+            largestReceiverId = Collections.max(realReceiver);
+        }
+        if (largestSenderId > largestReceiverId) {
+            largestId = largestSenderId;
+        } else {
+            largestId = largestReceiverId;
+        }
+
+        array1 = new int[largestId + 1][largestId + 1];
 
         for (int i_1 = 0; i_1 < array1.length; i_1++) {
             for (int j_1 = 0; j_1 < array1.length; j_1++) {
@@ -99,18 +113,18 @@ public class DWInteractionGraph {
     }
 
     private void helper(List sender, List receiver, List time, StringBuilder Etext) {
-        List<Integer> copyOfTranscation = new ArrayList<>();
+        List<Integer> xx = new ArrayList<>();
 
         String[] stuff = Etext.toString().split(" ");
 
         for (String word : stuff) {
             if (!word.equals("") && !word.equals(" "))
-                copyOfTranscation.add(Integer.parseInt(word));
+                xx.add(Integer.parseInt(word));
 
         }
 
         int count = 7;
-        for (Integer integer : copyOfTranscation) {
+        for (Integer integer : xx) {
             if (count == 7) {
                 sender.add(integer);
                 count = 3;
@@ -207,6 +221,9 @@ public class DWInteractionGraph {
             }
         }
 
+//        this.realSender = new ArrayList<>(inputDWIG.realSender);
+//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
+//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -241,6 +258,9 @@ public class DWInteractionGraph {
             }
         }
 
+//        this.realSender = new ArrayList<>(inputDWIG.realSender);
+//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
+//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -280,6 +300,19 @@ public class DWInteractionGraph {
         }
         return emailCount;
     }
+    
+    
+    List<Integer> getRealSender() {
+        return this.realSender;
+    }
+
+    List<Integer> getRealReceiver() {
+        return this.realReceiver;
+    }
+
+    List<Integer> getRealTime() {
+        return this.realTime;
+    }
 
     /* ------- Task 2 ------- */
 
@@ -298,7 +331,7 @@ public class DWInteractionGraph {
 
         Set<Integer> senderSet = new HashSet<>();
         Set<Integer> receiverSet = new HashSet<>();
-        Set<Integer> timeSet = new HashSet<>();
+        List<Integer> timeList = new ArrayList<>();
 
         int[] reportNum = new int[3];
 
@@ -310,13 +343,13 @@ public class DWInteractionGraph {
                 if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
                     senderSet.add(realSender.get(i));
                     receiverSet.add((realReceiver.get(i)));
-                    timeSet.add(realTime.get(i));
+                    timeList.add(realTime.get(i));
                 }
             }
         }
         reportNum[0] = senderSet.size();
         reportNum[1] = receiverSet.size();
-        reportNum[2] = timeSet.size();
+        reportNum[2] = timeList.size();
 
         return reportNum;
     }
@@ -373,119 +406,101 @@ public class DWInteractionGraph {
      */
 
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
-        // for sender id get the number of emails sent
-        // map id with that number
-        // iterate through the map to create an descending list
+        //Convert the set of userIds to an array for accessing inner elements
+        Integer[] userIdsArray = new Integer[getUserIDs().size()];
+        getUserIDs().toArray(userIdsArray);
 
-        // TODO: Implement this method
+        List<Integer> userIdsList = new ArrayList<>();
+        List<Integer> userRanks = new ArrayList<>();
 
+        if (interactionType == SendOrReceive.SEND) {
+            int mostSentEmails = 0;
+            int nextMostSentEmails = 0;
+            int rankedUsers = 0;
 
-        Map<Integer, Integer> hmap = new HashMap<>();
-
-        //List<Integer> wtf = new ArrayList<>();
-        // through realSender
-        for (Integer integer : realSender) {
-            int val = 0;
-            // make sure hmap does not have that key which is the first element of realSener List
-            if (!hmap.containsKey(integer)) {
-                int ttt = ReportOnUser(integer)[0];
-                //wtf.add(integer);
-                hmap.put(integer, ttt);
-
-            }
-        }
-
-        List<Integer> great = new ArrayList<>();
-        Set<Integer> ss = new HashSet<>(hmap.keySet());
-        List<Integer> ss1 = new ArrayList<>(ss);
-
-        Set<Integer> con = new HashSet<>();
-
-        for (int j = 0; j < hmap.size(); j++) {
-            int maxx = hmap.get(ss1.get(j));
-            int index1 = ss1.get(j);
-            int loc = 0;
-            for (int k = j; k < hmap.size(); k++) {
-                if ((hmap.get(ss1.get(j)) < hmap.get(ss1.get(k))) && !con.contains(ss1.get(k))) {
-                    index1 = ss1.get(k);
-                    maxx = hmap.get(k);
-                    loc = k;
-                } else if ((hmap.get(ss1.get(j)).equals(hmap.get(ss1.get(k)))) && j != k) {
-                    if (!con.contains(ss1.get(k))) {
-                        if (j > k) {
-                            index1 = ss1.get(k);
-                            maxx = hmap.get(k);
-                            loc = k;
-                        }
-                    }
-
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realSender.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
                 }
             }
-            great.add(index1);
-            con.add(ss1.get(loc));
-        }
-        //---------------------------------------------------------------------------------------------------------------------------
-        Map<Integer, Integer> hmap2 = new HashMap<>();
-
-        //List<Integer> wtf2 = new ArrayList<>();
-        // through realSender
-        for (Integer integer : realReceiver) {
-            int val = 0;
-            // make sure hmap does not have that key which is the first element of realSener List
-            if (!hmap2.containsKey(integer)) {
-                int ttt = ReportOnUser(integer)[1];
-                //wtf2.add(integer);
-                hmap2.put(integer, ttt);
-
+            if (N > userIdsList.size()) {
+                return -1;
             }
-        }
 
-        List<Integer> great2 = new ArrayList<>();
-        Set<Integer> ss3 = new HashSet<>(hmap2.keySet());
-        List<Integer> ss4 = new ArrayList<>(ss3);
-
-        Set<Integer> con2 = new HashSet<>();
-
-        for (int j = 0; j < hmap2.size(); j++) {
-            int maxx = hmap2.get(ss4.get(j));
-            int index1 = ss4.get(j);
-            int loc = 0;
-            for (int k = j; k < hmap2.size(); k++) {
-                if ((hmap2.get(ss4.get(j)) < hmap2.get(ss4.get(k))) && !con2.contains(ss4.get(k))) {
-                    index1 = ss4.get(k);
-                    maxx = hmap2.get(k);
-                    loc = k;
-                } else if ((hmap2.get(ss4.get(j)).equals(hmap2.get(ss4.get(k)))) && j != k) {
-                    if (!con2.contains(ss4.get(k))) {
-                        if (j > k) {
-                            index1 = ss4.get(k);
-                            maxx = hmap2.get(k);
-                            loc = k;
-                        }
-                    }
-
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[0] > mostSentEmails) {
+                    mostSentEmails = ReportOnUser(userIdsList.get(i))[0];
                 }
             }
-            great2.add(index1);
-            con2.add(ss4.get(loc));
-        }
-//--------------------------------------------------------------------------------------------------------------------------------------
-        SendOrReceive rr = SendOrReceive.SEND;
 
-        // it's send
-        if (rr == interactionType) {
-            if (N > hmap.size() || N < 1) {
-                return -1;
-            } else {
-                return great.get(N - 1);
+            //Create a List of Lists with user rankings at every Nth rank
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] == mostSentEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.addAll(NthRankUsers);
+
+                //Update mostInteractions
+                nextMostSentEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] < mostSentEmails &&
+                        ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
+                        nextMostSentEmails = ReportOnUser(userIdsList.get(i))[0];
+                    }
+                }
+                mostSentEmails = nextMostSentEmails;
             }
-        } else {
-            if (N > hmap2.size() || N < 1) {
+
+        } else if (interactionType == SendOrReceive.RECEIVE) {
+            int mostReceivedEmails = 0;
+            int nextMostReceivedEmails = 0;
+            int rankedUsers = 0;
+
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realReceiver.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
+                }
+            }
+            if (N > userIdsList.size()) {
                 return -1;
-            } else {
-                return great2.get(N - 1);
+            }
+
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[1] > mostReceivedEmails) {
+                    mostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                }
+            }
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] == mostReceivedEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.addAll(NthRankUsers);
+
+                //Update mostInteractions
+                nextMostReceivedEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] < mostReceivedEmails &&
+                        ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
+                        nextMostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                    }
+                }
+                mostReceivedEmails = nextMostReceivedEmails;
             }
         }
+        return userRanks.get(N - 1);
+
     }
 
     /* ------- Task 3 ------- */
@@ -504,8 +519,6 @@ public class DWInteractionGraph {
         // TODO: Implement this method
         return null;
     }
-
-
 
     /**
      * performs depth first search on the DWInteractionGraph object
@@ -529,109 +542,69 @@ public class DWInteractionGraph {
         int max = Collections.max(size);
         // int sizeOfV = size.size();
         List<Integer> theList = new ArrayList<>();
+        theList.add(userID1);
+        DFS1(userID1, max + 1, userID2, theList);
 
-        boolean visited1[] = new boolean[max];
-//        Boolean m =DD( visited1,userID1,userID2);
-
-//        if(m== true){
-            theList.add(userID1);
-            DFS1(userID1, max + 1, userID2, theList);
+        if (theList.contains(userID2)) {
             return theList;
-//        }
+        }
 
-        //return null;
-
+        return null;
     }
-
-//    boolean DD( boolean[] visited1, int id1, int id2){
-//
-//        visited1[id1] = true;
-//
-//        for (int i = 0; i < array1.length; i++) {
-//            if (array1[id1][i] == 1) {
-//
-//                if (i == id2) {
-//                    //theList.add(i);
-//                    //array2[v][i]=1;
-//
-//                    return true;
-//                } else if (!visited1[i]) {
-//                    //theList.add(i);
-//                    //array2[v][i]=1;
-//                    DD( visited1, i, id2);
-//                    break;
-//                }
-//            }
-//        }
-//            return false;
-//    }
 
     // v is number of vertices
-    private void DFS1(int start, int S, int userID2, List<Integer> theList) {
+    void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
         boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
-        int [][]array2 = new int[array1.length][array1.length];
-        DFSUtil(start, visited, userID2, theList,  0, array2);
+        DFSUtil(start, visited, userID2, theList,  0);
     }
 
-    private void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track, int[][]array2) {
+    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track) {
         // mark the current node as visited
         // and add the node to the return list
+        visited[v] = true;
+
+        //int track = 0;
+        for (int i = 0; i < array1.length; i++) {
+            if (array1[v][i] == 1) {
+
+                if (i == userID2) {
+                    track++;
+                    theList.add(i);
 
 
-        // below we know two must reach
-        if(!theList.contains(userID2)){
+                    break;
+                } else if (!visited[i]) {
+                    theList.add(i);
+                    DFSUtil(i, visited, userID2, theList,track);
+                    break;
+                }
+            }
+            // go to the previous one to check
+        }
+
+        if(track==0){
             Boolean b = true;
             for (Boolean bb : visited) {
                 if (bb == false) {
                     b = bb;
                 }
             }
-            if(b!=true){
-                visited[v] = true;
-                //int track = 0;
-                for (int i = 0; i < array1.length; i++) {
-                    if (array1[v][i] == 1) {
 
-                        if (i == userID2) {
-                            track++;
-                            theList.add(i);
-                            array2[v][i]=1;
-                            break;
-                        } else if (!visited[i]) {
-                            theList.add(i);
-                            array2[v][i]=1;
-                            DFSUtil(i, visited, userID2, theList,track,array2);
-                            break;
-                        }
-                    }
-                    // go to the previous one to check
-                }
-
-                if(track==0){
-
-                    for (Boolean bb : visited) {
-                        if (bb == false) {
-                            b = bb;
-                        }
-                    }
-
-                    int previous = 0;
-                    // obtain the previous node
-                    for (int j = 0; j < array1.length; j++) {
-                        if (array2[j][v] == 1) {
-                            previous = j;
-                            break;
-                        }
-                    }
-                    if (track == 0 && b == false) {
-                        DFSUtil(previous, visited, userID2, theList,track, array2);
-                    } else {
-                        System.out.println("end");
-                    }
+            int previous = 0;
+            // obtain the previous node
+            for (int j = 0; j < array1.length; j++) {
+                if (array1[j][v] == 1) {
+                    previous = j;
+                    break;
                 }
             }
+            if (track == 0 && b == false) {
+                DFSUtil(previous, visited, userID2, theList,track);
 
+            } else {
+                System.out.println("end");
+            }
         }
     }
 
