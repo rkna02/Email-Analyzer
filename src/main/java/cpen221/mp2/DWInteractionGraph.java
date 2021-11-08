@@ -352,7 +352,7 @@ public class DWInteractionGraph {
         int b = 0;
 
         nodes[user1]=true;
-        queue.add(user1);   //root node is added to the top of the queue
+        queue.add(user1);
         int top = user1;
 
         int i = 0;
