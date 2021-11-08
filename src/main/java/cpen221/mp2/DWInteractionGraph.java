@@ -1,5 +1,8 @@
 package cpen221.mp2;
 
+import org.w3c.dom.Node;
+
+import javax.xml.stream.events.EndDocument;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,28 +17,15 @@ public class DWInteractionGraph {
     /*
     RI: array1 cannot be greater than the size of all the vertices,
         and it only contains zero and one.
-    AF: A 2d to represent adjacency matrix
+    AF: A 2d to represent adajacency matrix
      */
     //private int emailCount; // count of email sent from specified sender to specified receiver]
     //private Set<Integer> idSet ; // the ID Set of a graph
 
-    private int [][] array1; // adjacency matrix
+    private int[][] array1; // adajency matrix
     private List<Integer> realSender;
     private List<Integer> realReceiver;
-    private List<Integer> realTime ;
-    //private List<Integer> xx = new ArrayList<>(); // a List of integer; all sender, receiver, and time info;
-
-
-
-    //private StringBuilder Etext = new StringBuilder();
-
-    private List<Integer> sender = new ArrayList<>(); // a List of sender info
-    private List <Integer> receiver = new ArrayList<>(); // a list of receiver info
-    private List<Integer> time = new ArrayList<>(); // a list of time info
-
-    private List<Integer> realSender1 = new ArrayList<>();
-    private List<Integer> realReceiver1 = new ArrayList<>();
-    private List<Integer> realTime1 = new ArrayList<>();
+    private List<Integer> realTime;
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
@@ -46,50 +36,60 @@ public class DWInteractionGraph {
      *                   directory containing email interactions
      */
     public DWInteractionGraph(String fileName, int[] timeWindow) {
-        // TODO: Implement this constructor
-
-//         List<Integer> sender = new ArrayList<>(); // a List of sender info
-//         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
-//         List<Integer> time = new ArrayList<>(); // a list of time info
-//
-//         List<Integer> realSender1 = new ArrayList<>();
-//         List<Integer> realReceiver1 = new ArrayList<>();
-//         List<Integer> realTime1 = new ArrayList<>();
-
+        List<Integer> sender = new ArrayList<>(); // a List of sender info
+        List<Integer> receiver = new ArrayList<>(); // a list of receiver info
+        List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
-        reader(fileName,Etext);
+        int largestSenderId = 0;
+        int largestReceiverId = 0;
+        int largestId = 0;
+
+        realSender = new ArrayList<>();
+        realReceiver = new ArrayList<>();
+        realTime = new ArrayList<>();
+
+        reader(fileName, Etext);
         helper(sender, receiver, time, Etext);
 
         // filter out senders and receivers who are not in the time window
-        for(int i = 0; i < time.size(); i++){
-            if(time.get(i)>= timeWindow[0] && time.get(i) <=timeWindow[1]){
-                realSender1.add(sender.get(i));
-                realReceiver1.add(receiver.get(i));
-                realTime1.add(time.get(i));
+        for (int i = 0; i < time.size(); i++) {
+            if (time.get(i) >= timeWindow[0] && time.get(i) <= timeWindow[1]) {
+                realSender.add(sender.get(i));
+                realReceiver.add(receiver.get(i));
+                realTime.add(time.get(i));
             }
         }
 
-        int [][] array1 = new int[realSender1.size()][realSender1.size()];
+        //Find largest user id
+        if (realSender.size() > 0) {
+            largestSenderId = Collections.max(realSender);
+        }
+        if (realReceiver.size() > 0) {
+            largestReceiverId = Collections.max(realReceiver);
+        }
+        if (largestSenderId > largestReceiverId) {
+            largestId = largestSenderId;
+        } else {
+            largestId = largestReceiverId;
+        }
 
-        for(int i_1 = 0; i_1 < array1.length; i_1++){
-            for(int j_1 =0; j_1 <array1.length; j_1++){
-                array1[i_1][j_1]= 0;
+        array1 = new int[largestId + 1][largestId + 1];
+
+        for (int i_1 = 0; i_1 < array1.length; i_1++) {
+            for (int j_1 = 0; j_1 < array1.length; j_1++) {
+                array1[i_1][j_1] = 0;
             }
         }
 
-        int count =0;
-        for(Integer i: realSender1){
-            array1[i][realReceiver1.get(count)] = 1;
+        int count = 0;
+        for (Integer i : realSender) {
+            array1[i][realReceiver.get(count)] = 1;
             count++;
         }
 
-        this.array1 = array1;
-        realSender = realSender1;
-        realReceiver = realReceiver1;
-        realTime = realTime1;
     }
 
-    private void reader(String fileName, StringBuilder Etext){
+    private void reader(String fileName, StringBuilder Etext) {
         try {
 
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -113,26 +113,25 @@ public class DWInteractionGraph {
 
     private void helper(List sender, List receiver, List time, StringBuilder Etext) {
         List<Integer> xx = new ArrayList<>();
-        String[] stuff= Etext.toString().split(" ");
-        for (String word :stuff ) {
-            if(word!="" && word!=" ")
+
+        String[] stuff = Etext.toString().split(" ");
+
+        for (String word : stuff) {
+            if (!word.equals("") && !word.equals(" "))
                 xx.add(Integer.parseInt(word));
-            else{
-                break;
-            }
+
         }
-        int count =7;
-        for(int i = 0; i < xx.size(); i++){
-            if(count ==7){
-                sender.add(i);
+
+        int count = 7;
+        for (Integer integer : xx) {
+            if (count == 7) {
+                sender.add(integer);
                 count = 3;
-            }
-            else if(count == 3){
-                receiver.add(i);
+            } else if (count == 3) {
+                receiver.add(integer);
                 count = 5;
-            }
-            else if(count ==5){
-                time.add(i);
+            } else if (count == 5) {
+                time.add(integer);
                 count = 7;
             }
         }
@@ -149,34 +148,42 @@ public class DWInteractionGraph {
     public DWInteractionGraph(String fileName) {
         // TODO: Implement this constructor
 
+        List<Integer> sender = new ArrayList<>(); // a List of sender info
+        List<Integer> receiver = new ArrayList<>(); // a list of receiver info
+        List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
+
+
         // use a 2-d array to represent this object as adjacency matrix
-        reader(fileName , Etext); // Etext is a string and it will be read and
+        reader(fileName, Etext); // Etext is a string and it will be read and
         //xx is an arraylist with elements of string that rep integers
         helper(sender, receiver, time, Etext);
 
-        realSender1 = new ArrayList<>(sender);
-        realReceiver1 = new ArrayList<>(receiver);
-        realTime1 = new ArrayList<>(time);
+        realSender = new ArrayList<>(sender);
+        realReceiver = new ArrayList<>(receiver);
+        realTime = new ArrayList<>(time);
 
-        int [][] array2 = new int[realSender1.size()][realSender1.size()];
-
-        for(int i_1 = 0 ; i_1 < array2.length; i_1++){
-            for(int j_1 =0; j_1 <array2.length; j_1++){
-                array2[i_1][j_1]= 0;
+        // find the largest user ID
+        int maxsize = 0;
+        for (Integer value : realSender) {
+            if (maxsize < value) {
+                maxsize = value;
+            }
+        }
+        for (Integer integer : realReceiver) {
+            if (maxsize < integer) {
+                maxsize = integer;
             }
         }
 
-        int count =0;
-        for(Integer i: realSender1){
-            array2[i][realReceiver1.get(count)] = 1;
+        this.array1 = new int[maxsize + 1][maxsize + 1];
+
+        int count = 0;
+        for (Integer i : realSender) {
+            this.array1[realSender.get(count)][realReceiver.get(count)] = 1;
             count++;
         }
 
-        array1 = array2; // instance of the graph
-        realSender = realSender1;
-        realReceiver = realReceiver1;
-        realTime = realTime1;
 
     }
 
@@ -193,18 +200,29 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
         // TODO: Implement this constructor
+        realSender = new ArrayList<>();
+        realReceiver = new ArrayList<>();
+        realTime = new ArrayList<>();
+
         int length = inputDWIG.array1.length;
-        int array2[][] = new int[length][];
 
+        this.array1 = new int[length + 1][length + 1];
 
-        for(int i = 0; i < length; i++ ){
-            if(inputDWIG.realTime.get(i) >= timeFilter[0] && inputDWIG.realTime.get(i) <= timeFilter[1]){
-                array2[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)]=1;
-            }
-            else{
-                array2[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)]=0;
+        for (int i = 0; i < inputDWIG.realTime.size(); i++) {
+            if (inputDWIG.realTime.get(i) >= timeFilter[0] && inputDWIG.realTime.get(i) <= timeFilter[1]) {
+                this.array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                realSender.add(inputDWIG.realSender.get(i));
+                realReceiver.add(inputDWIG.realReceiver.get(i));
+                realTime.add(inputDWIG.realTime.get(i));
+            } else {
+                this.array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+
             }
         }
+
+//        this.realSender = new ArrayList<>(inputDWIG.realSender);
+//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
+//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -219,24 +237,29 @@ public class DWInteractionGraph {
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
         // TODO: Implement this constructor
+        realSender = new ArrayList<>();
+        realReceiver = new ArrayList<>();
+        realTime = new ArrayList<>();
 
         int length = inputDWIG.array1.length;
-        int array2[][] = inputDWIG.array1;
 
-        for(int i = 0; i<length; i++ ){
-            if(!userFilter.contains(inputDWIG.realSender.get(i))){
-                array2[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)]=0;
-            }
-            else if(!userFilter.contains(inputDWIG.realReceiver.get(i))){
-                array2[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)]=0;
-            }
-            else{
-                array2[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)]=1;
+        this.array1 = new int[length + 1][length + 1];
+        for (int i = 0; i < inputDWIG.realTime.size(); i++) {
+
+            if (!userFilter.contains(inputDWIG.realSender.get(i)) && !userFilter.contains(inputDWIG.realReceiver.get(i))) {
+                array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+
+            } else {
+                array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                realSender.add(inputDWIG.realSender.get(i));
+                realReceiver.add(inputDWIG.realReceiver.get(i));
+                realTime.add(inputDWIG.realTime.get(i));
             }
         }
 
-        array1 = array2;
-
+//        this.realSender = new ArrayList<>(inputDWIG.realSender);
+//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
+//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -245,13 +268,13 @@ public class DWInteractionGraph {
      */
     public Set<Integer> getUserIDs() {
         // TODO: Implement this getter method
-        Set <Integer> idSet = new HashSet<>();
+        Set<Integer> idSet = new HashSet<>();
 
-        for(int i=0; i< array1.length; i++){
-            for(int j=0; j< array1.length;j++){
-                if(array1[i][j]==1){
-                    idSet.add(realSender.get(i));
-                    idSet.add(realReceiver.get(j));
+        for (int i = 0; i < array1.length; i++) {
+            for (int j = 0; j < array1.length; j++) {
+                if (array1[i][j] == 1) {
+                    idSet.add(i);
+                    idSet.add(j);
                 }
             }
         }
@@ -268,15 +291,25 @@ public class DWInteractionGraph {
     public int getEmailCount(int sender, int receiver) {
         // TODO: Implement this getter method
 
-        int emailCount =0;
-        for(int i=0;i<realSender.size(); i++){
-            for(int j = 0 ; j <realReceiver.size(); j++){
-                if(realSender.get(i)==sender && realReceiver.get(j)==receiver){
-                    emailCount++;
-                }
+        int emailCount = 0;
+        for (int i = 0; i < realSender.size(); i++) {
+            if (realSender.get(i) == sender && realReceiver.get(i) == receiver) {
+                emailCount++;
             }
         }
         return emailCount;
+    }
+
+    List<Integer> getRealSender() {
+        return this.realSender;
+    }
+
+    List<Integer> getRealReceiver() {
+        return this.realReceiver;
+    }
+
+    List<Integer> getRealTime() {
+        return this.realTime;
     }
 
     /* ------- Task 2 ------- */
@@ -337,50 +370,106 @@ public class DWInteractionGraph {
      * if no path exists, should return null.
      */
     public List<Integer> BFS(int userID1, int userID2) {
-        DWInteractionGraph graph;
-        graph = new DWInteractionGraph("resources/Task3Transactions1.txt");
-        List<Integer> BFS = new ArrayList<>();
-
         int user1 = userID1;
         int user2 = userID2;
 
-        int totalnodes = 9;                              //number of nodes in the graph
-        LinkedList<Integer> adj[];
-        Queue<Integer> queue = new LinkedList<Integer>();
+        Set<Integer> size = new HashSet<>();
+        for (Integer integer : realSender) {
+            size.add(integer);
+        }
+        for (Integer integer1 : realReceiver) {
+            size.add(integer1);
+        }
+        int max = Collections.max(size);
 
-        boolean nodes[] = new boolean[totalnodes];       //Holds true and false
-        int b = 0;
+        Set<Integer> IDs = getUserIDs();
 
-        nodes[user1]=true;
+        if (!IDs.contains(user1) || !IDs.contains(user2)) {
+            return null;
+        }
+        // int sizeOfV = size.size();
+        List<Integer> BFS = new ArrayList<>();
+
+        int[][] Dgraph = array1;
+        int[] visited = new int[max + 1];
+
+
+        Queue<Integer> queue = new LinkedList<>();
         queue.add(user1);
-        int top = user1;
+        visited[user1] = 1;
 
-        int i = 0;
+        while(!queue.isEmpty()){
+            int presentNode = queue.poll();
+            BFS.add(presentNode);
+            int nextNode = 0;
 
-            while (queue.size() != 0)
-            {
-                top = queue.poll();
-
-                if (top != user2) {
-                    BFS.add(top);   //Add top to the path list
-                }
-
-                else {
-                    break;
-                }
-
-                for (int j = 0; j < adj[user1].size(); j++)  //iterate through the linked list and push all neighbors into queue
-                {
-                    b = adj[user1].get(i);
-                    if (!nodes[b])                    //only insert nodes into queue if they have not been explored already
-                    {
-                        nodes[b] = true;
-                        queue.add(b);
-                    }
-                }
+            //Visit and add all unvisited neighbors to the queue
+            while(((nextNode = unvisited(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
+                queue.add(nextNode);
+                visited[nextNode] = 1;
             }
+
+            if (nextNode == user2) {
+                while(!queue.isEmpty()){
+                    BFS.add(queue.poll());
+                }
+               queue.add(user2);
+                BFS.add(queue.poll());
+            }
+        }
         return BFS;
     }
+
+    private int unvisited(int presentNode, int graph [][], int visited[], int user2){
+        for(int index = 0; index < graph.length; index++){
+            if(visited[index] == 0 && graph[presentNode][index] == 1){
+                return index;
+            }
+
+            if(index == user2 && graph[presentNode][index] == 1) {
+                return user2;
+            }
+        }
+        return -1;
+    }
+
+//        int totalnodes = size.size();                              //number of nodes in the graph
+//        LinkedList<Integer> adj[];
+//        Queue<Integer> queue = new LinkedList<Integer>();
+//
+//        boolean nodes[] = new boolean[totalnodes];       //Holds true and false
+//        int b = 0;
+//
+//        nodes[user1]=true;
+//        queue.add(user1);
+//        int top = user1;
+//
+//        int i = 0;
+//
+//            while (queue.size() != 0)
+//            {
+//                top = queue.poll();
+//
+//                if (top != user2) {
+//                    BFS.add(top);   //Add top to the path list
+//                }
+//
+//                else {
+//                    break;
+//                }
+//
+//                for (int j = 0; j < adj[user1].size(); j++)  //goes through the linked list and pushes neighbouring nodes to the queue
+//                {
+//                    b = adj[user1].get(i);
+//                    if (!nodes[b])                    //inserts nodes which have not been accessed
+//                    {
+//                        nodes[b] = true;
+//                        queue.add(b);
+//                    }
+//                }
+//            }
+//        return BFS;
+//    }
 
     /**
      * performs depth first search on the DWInteractionGraph object
@@ -410,5 +499,4 @@ public class DWInteractionGraph {
         // TODO: Implement this method
         return 0;
     }
-
 }
