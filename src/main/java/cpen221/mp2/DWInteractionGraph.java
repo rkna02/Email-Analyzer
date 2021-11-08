@@ -37,12 +37,17 @@ public class DWInteractionGraph {
      *                   directory containing email interactions
      */
     public DWInteractionGraph(String fileName, int[] timeWindow) {
-        // TODO: Implement this constructor
-
         List<Integer> sender = new ArrayList<>(); // a List of sender info
         List<Integer> receiver = new ArrayList<>(); // a list of receiver info
         List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
+        int largestSenderId = 0;
+        int largestReceiverId = 0;
+        int largestId = 0;
+
+        realSender = new ArrayList<>();
+        realReceiver = new ArrayList<>();
+        realTime = new ArrayList<>();
 
         reader(fileName, Etext);
         helper(sender, receiver, time, Etext);
@@ -56,7 +61,20 @@ public class DWInteractionGraph {
             }
         }
 
-        array1 = new int[realSender.size()][realSender.size()];
+        //Find largest user id
+        if (realSender.size() > 0) {
+            largestSenderId = Collections.max(realSender);
+        }
+        if (realReceiver.size() > 0) {
+            largestReceiverId = Collections.max(realReceiver);
+        }
+        if (largestSenderId > largestReceiverId) {
+            largestId = largestSenderId;
+        } else {
+            largestId = largestReceiverId;
+        }
+
+        array1 = new int[largestId + 1][largestId + 1];
 
         for (int i_1 = 0; i_1 < array1.length; i_1++) {
             for (int j_1 = 0; j_1 < array1.length; j_1++) {
