@@ -232,7 +232,7 @@ public class UDWInteractionGraph {
 
         //Construct Adjacency List
         UDWInteractions = new LinkedList[largestUserId + 1];
-        
+
         for(int i = 0; i < allSendTimes.size(); i++) {
             if (UDWInteractions[allSenders.get(i)] == null) {
                 UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
@@ -295,7 +295,7 @@ public class UDWInteractionGraph {
 
         //Construct Adjacency List
         UDWInteractions = new LinkedList[largestUserId + 1];
-        
+
         for(int i = 0; i < allSendTimes.size(); i++) {
             if (UDWInteractions[allSenders.get(i)] == null) {
                 UDWInteractions[allSenders.get(i)] = new LinkedList<Integer>();
@@ -329,17 +329,21 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * Creates a Set that includes all user IDs in this UDWInteractionGraph.
+     * 
      * @return a Set of Integers, where every element in the set is a User ID
      *         in this UDWInteractionGraph.
      *         If there are no users in UDWInteractionGraph,
      *         returns an empty Set.
-     *          
+     *
      */
     public Set<Integer> getUserIDs() {
         return this.userIds;
     }
 
     /**
+     * Finds the number of email interactions (send/receive) between user1 and user2.
+     * 
      * @param user1 the User ID of the first user.
      * @param user2 the User ID of the second user.
      * @return The number of email interactions (send/receive) between user1 and user2.
@@ -348,7 +352,7 @@ public class UDWInteractionGraph {
      */
     public int getEmailCount(int user1, int user2) {
         int count = 0;
-        
+
         for (int i = 0; i < this.allSenders.size(); i++) {
             if (this.allSenders.get(i) == user1 && this.allReceivers.get(i) == user2 ||
                 this.allSenders.get(i) == user2 && this.allReceivers.get(i) == user1) {
@@ -361,22 +365,20 @@ public class UDWInteractionGraph {
     /* ------- Task 2 ------- */
 
     /**
+     * Finds the number of users sending/receiving Emails in a certain time window.
+     * Finds the number of Emails sent in the same time window.
+     *
      * @param timeWindow is an int array of size 2 [t0, t1]
      *                   where t0<=t1
-     *                   requires: t0 & t1 >= 0
      * @return an int array of length 2, with the following structure:
-     *  [NumberOfUsers, NumberOfEmailTransactions]
+     *         [NumberOfUsers, NumberOfEmailTransactions]
      */
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
         UDWInteractionGraph graphInTimeWindow = new UDWInteractionGraph(this, timeWindow);
-        Set<Integer> numUsersSet = new HashSet<>();
+        Set<Integer> numUsersSet = graphInTimeWindow.getUserIDs();
         int[] data = new int[2];
-        int numUsers = 0;
-        int numEmails = 0;
-
-        numUsersSet = graphInTimeWindow.getUserIDs();
-        numUsers = numUsersSet.size();
-        numEmails = graphInTimeWindow.allSenders.size();
+        int numUsers = numUsersSet.size();
+        int numEmails = graphInTimeWindow.allSenders.size();
 
         data[0] = numUsers;
         data[1] = numEmails;
@@ -385,12 +387,15 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * Report the number of Emails sent and received by a user,
+     * and the user IDs of the unique users they interacted with.
+     *
      * @param userID the User ID of the user for which
      *               the report will be created
      * @return an int array of length 2 with the following structure:
-     *  [NumberOfEmails, UniqueUsersInteractedWith]
-     * If the specified User ID does not exist in this instance of a graph,
-     * returns [0, 0].
+     *         [NumberOfEmails, UniqueUsersInteractedWith]
+     *         If the specified User ID does not exist in this instance of a graph,
+     *         returns [0, 0].
      */
     public int[] ReportOnUser(int userID) {
         Set<Integer> numUsersSet = new HashSet<>();
@@ -420,9 +425,14 @@ public class UDWInteractionGraph {
     }
 
     /**
+     * Finds the Nth most active user in an adjacency list.
+     * The user is more active if they send or/and receive more Emails.
+     *
      * @param N a positive number representing rank. N=1 means the most active.
-     *          requires: N must be > 0
+     * requires: N must be > 0
      * @return the User ID for the Nth most active user.
+     *         If two or more users sends or receivers the same number of Emails (same rank),
+     *         returns the user with the smallest user ID
      *         If the Nth most active user does not exist,
      *         returns -1.
      */
@@ -443,7 +453,7 @@ public class UDWInteractionGraph {
             }
         }
 
-        //Create a List of Lists with user rankings
+        //Create a List of Lists with user rankings at every Nth rank
         while (rankedUsers < this.userIds.size()) {
             List<Integer> NthRankUsers = new ArrayList<>();
             for (int i = 0; i < this.userIds.size(); i++) {
@@ -482,7 +492,7 @@ public class UDWInteractionGraph {
      *
      * @param rootUser the user ID to start the search with
      * @return An arrayList of visited user IDs after a Breadth First Search
-     *         If no users have interactions with rootUser, or if rootUser does not exist, 
+     *         If no users have interactions with rootUser, or if rootUser does not exist,
      *         returns empty List.
      */
     private List<Integer> UDWGraphBFS(int rootUser) {
@@ -494,7 +504,7 @@ public class UDWInteractionGraph {
         //Initialize queue and boolean array for keeping track of the search path
         boolean[] visitedUser = new boolean[userIds.size() + 1];
         Queue<Integer> queue = new LinkedList<Integer>();
-        
+
         ArrayList<Integer> graphComponents = new ArrayList<>();
 
         //Add the root user to the beginning of the queue
@@ -520,7 +530,7 @@ public class UDWInteractionGraph {
     /**
      * Finds the number of completely disjoint graph
      * components in the UDWInteractionGraph object.
-     * 
+     *
      * @return the number of completely disjoint graph
      *         components in the UDWInteractionGraph object.
      * effects: number returned >= 0;
