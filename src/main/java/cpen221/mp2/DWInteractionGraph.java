@@ -69,58 +69,62 @@ public class DWInteractionGraph {
      *                   should only include those emails in the input
      *                   UDWInteractionGraph with send time t in the
      *                   t0 <= t <= t1 range.
-     * effects:          FileNotFound Exception if file is missing from the resources directory
+     *
      */
     public DWInteractionGraph(String fileName, int[] timeWindow) {
-        List<Integer> sender = new ArrayList<>(); // a List of sender info
-        List<Integer> receiver = new ArrayList<>(); // a list of receiver info
-        List<Integer> time = new ArrayList<>(); // a list of time info
-        StringBuilder Etext = new StringBuilder();
-        int largestSenderId = 0;
-        int largestReceiverId = 0;
-        int largestId = 0;
+        try {
+            List<Integer> sender = new ArrayList<>(); // a List of sender info
+            List<Integer> receiver = new ArrayList<>(); // a list of receiver info
+            List<Integer> time = new ArrayList<>(); // a list of time info
+            StringBuilder Etext = new StringBuilder();
+            int largestSenderId = 0;
+            int largestReceiverId = 0;
+            int largestId = 0;
 
-        realSender = new ArrayList<>();
-        realReceiver = new ArrayList<>();
-        realTime = new ArrayList<>();
+            realSender = new ArrayList<>();
+            realReceiver = new ArrayList<>();
+            realTime = new ArrayList<>();
 
-        reader(fileName, Etext);
-        helper(sender, receiver, time, Etext);
+            reader(fileName, Etext);
+            helper(sender, receiver, time, Etext);
 
-        // filter out senders and receivers who are not in the time window
-        for (int i = 0; i < time.size(); i++) {
-            if (time.get(i) >= timeWindow[0] && time.get(i) <= timeWindow[1]) {
-                realSender.add(sender.get(i));
-                realReceiver.add(receiver.get(i));
-                realTime.add(time.get(i));
+            // filter out senders and receivers who are not in the time window
+            for (int i = 0; i < time.size(); i++) {
+                if (time.get(i) >= timeWindow[0] && time.get(i) <= timeWindow[1]) {
+                    realSender.add(sender.get(i));
+                    realReceiver.add(receiver.get(i));
+                    realTime.add(time.get(i));
+                }
             }
-        }
 
-        //Find largest user id
-        if (realSender.size() > 0) {
-            largestSenderId = Collections.max(realSender);
-        }
-        if (realReceiver.size() > 0) {
-            largestReceiverId = Collections.max(realReceiver);
-        }
-        if (largestSenderId > largestReceiverId) {
-            largestId = largestSenderId;
-        } else {
-            largestId = largestReceiverId;
-        }
-
-        DWInteractions = new int[largestId + 1][largestId + 1];
-
-        for (int i_1 = 0; i_1 < DWInteractions.length; i_1++) {
-            for (int j_1 = 0; j_1 < DWInteractions.length; j_1++) {
-                DWInteractions[i_1][j_1] = 0;
+            //Find largest user id
+            if (realSender.size() > 0) {
+                largestSenderId = Collections.max(realSender);
             }
-        }
+            if (realReceiver.size() > 0) {
+                largestReceiverId = Collections.max(realReceiver);
+            }
+            if (largestSenderId > largestReceiverId) {
+                largestId = largestSenderId;
+            } else {
+                largestId = largestReceiverId;
+            }
 
-        int count = 0;
-        for (Integer i : realSender) {
-            DWInteractions[i][realReceiver.get(count)] = 1;
-            count++;
+            DWInteractions = new int[largestId + 1][largestId + 1];
+
+            for (int i_1 = 0; i_1 < DWInteractions.length; i_1++) {
+                for (int j_1 = 0; j_1 < DWInteractions.length; j_1++) {
+                    DWInteractions[i_1][j_1] = 0;
+                }
+            }
+
+            int count = 0;
+            for (Integer i : realSender) {
+                DWInteractions[i][realReceiver.get(count)] = 1;
+                count++;
+            }
+        } finally {
+            checkRep();
         }
 
     }
@@ -131,6 +135,7 @@ public class DWInteractionGraph {
      * @param Etext      Data within the file
      * @param fileName   the name of the file in the resources
      *                   directory containing email interactions
+     * effects:          IoException if file cannot be read
      */
     private void reader(String fileName, StringBuilder Etext) {
         try {
@@ -160,7 +165,7 @@ public class DWInteractionGraph {
      * @param sender a list which holds all senders
      * @param receiver a list which holds all receivers
      * @param time a list which holds the time at each email interaction
-     * @param Etext
+     * @param Etext lines of data extracted from file
      */
     private void helper(List sender, List receiver, List time, StringBuilder Etext) {
         List<Integer> xx = new ArrayList<>();
@@ -197,43 +202,45 @@ public class DWInteractionGraph {
      *                 directory containing email interactions
      */
     public DWInteractionGraph(String fileName) {
+        try {
+            List<Integer> sender = new ArrayList<>(); // a List of sender info
+            List<Integer> receiver = new ArrayList<>(); // a list of receiver info
+            List<Integer> time = new ArrayList<>(); // a list of time info
+            StringBuilder Etext = new StringBuilder();
 
-        List<Integer> sender = new ArrayList<>(); // a List of sender info
-        List<Integer> receiver = new ArrayList<>(); // a list of receiver info
-        List<Integer> time = new ArrayList<>(); // a list of time info
-        StringBuilder Etext = new StringBuilder();
 
+            // use a 2-d array to represent this object as adjacency matrix
+            reader(fileName, Etext); // Etext is a string and it will be read and
+            //xx is an arraylist with elements of string that rep integers
+            helper(sender, receiver, time, Etext);
 
-        // use a 2-d array to represent this object as adjacency matrix
-        reader(fileName, Etext); // Etext is a string and it will be read and
-        //xx is an arraylist with elements of string that rep integers
-        helper(sender, receiver, time, Etext);
+            realSender = new ArrayList<>(sender);
+            realReceiver = new ArrayList<>(receiver);
+            realTime = new ArrayList<>(time);
 
-        realSender = new ArrayList<>(sender);
-        realReceiver = new ArrayList<>(receiver);
-        realTime = new ArrayList<>(time);
-
-        // find the largest user ID
-        int maxsize = 0;
-        for (Integer value : realSender) {
-            if (maxsize < value) {
-                maxsize = value;
+            // find the largest user ID
+            int maxsize = 0;
+            for (Integer value : realSender) {
+                if (maxsize < value) {
+                    maxsize = value;
+                }
             }
-        }
-        for (Integer integer : realReceiver) {
-            if (maxsize < integer) {
-                maxsize = integer;
+            for (Integer integer : realReceiver) {
+                if (maxsize < integer) {
+                    maxsize = integer;
+                }
             }
+
+            this.DWInteractions = new int[maxsize + 1][maxsize + 1];
+
+            int count = 0;
+            for (Integer i : realSender) {
+                this.DWInteractions[realSender.get(count)][realReceiver.get(count)] = 1;
+                count++;
+            }
+        } finally {
+            checkRep();
         }
-
-        this.DWInteractions = new int[maxsize + 1][maxsize + 1];
-
-        int count = 0;
-        for (Integer i : realSender) {
-            this.DWInteractions[realSender.get(count)][realReceiver.get(count)] = 1;
-            count++;
-        }
-
 
     }
 
@@ -249,24 +256,28 @@ public class DWInteractionGraph {
      *                   t0 <= t <= t1 range.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, int[] timeFilter) {
-        realSender = new ArrayList<>();
-        realReceiver = new ArrayList<>();
-        realTime = new ArrayList<>();
+        try {
+            realSender = new ArrayList<>();
+            realReceiver = new ArrayList<>();
+            realTime = new ArrayList<>();
 
-        int length = inputDWIG.DWInteractions.length;
+            int length = inputDWIG.DWInteractions.length;
 
-        this.DWInteractions = new int[length + 1][length + 1];
+            this.DWInteractions = new int[length + 1][length + 1];
 
-        for (int i = 0; i < inputDWIG.realTime.size(); i++) {
-            if (inputDWIG.realTime.get(i) >= timeFilter[0] && inputDWIG.realTime.get(i) <= timeFilter[1]) {
-                this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
-                realSender.add(inputDWIG.realSender.get(i));
-                realReceiver.add(inputDWIG.realReceiver.get(i));
-                realTime.add(inputDWIG.realTime.get(i));
-            } else {
-                this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+            for (int i = 0; i < inputDWIG.realTime.size(); i++) {
+                if (inputDWIG.realTime.get(i) >= timeFilter[0] && inputDWIG.realTime.get(i) <= timeFilter[1]) {
+                    this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                    realSender.add(inputDWIG.realSender.get(i));
+                    realReceiver.add(inputDWIG.realReceiver.get(i));
+                    realTime.add(inputDWIG.realTime.get(i));
+                } else {
+                    this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
 
+                }
             }
+        } finally {
+            checkRep();
         }
     }
 
@@ -281,28 +292,34 @@ public class DWInteractionGraph {
      *                   nor the receiver exist in userFilter.
      */
     public DWInteractionGraph(DWInteractionGraph inputDWIG, List<Integer> userFilter) {
-        realSender = new ArrayList<>();
-        realReceiver = new ArrayList<>();
-        realTime = new ArrayList<>();
+        try {
+            realSender = new ArrayList<>();
+            realReceiver = new ArrayList<>();
+            realTime = new ArrayList<>();
 
-        int length = inputDWIG.DWInteractions.length;
+            int length = inputDWIG.DWInteractions.length;
 
-        this.DWInteractions = new int[length + 1][length + 1];
-        for (int i = 0; i < inputDWIG.realTime.size(); i++) {
+            this.DWInteractions = new int[length + 1][length + 1];
+            for (int i = 0; i < inputDWIG.realTime.size(); i++) {
 
-            if (!userFilter.contains(inputDWIG.realSender.get(i)) && !userFilter.contains(inputDWIG.realReceiver.get(i))) {
-                DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+                if (!userFilter.contains(inputDWIG.realSender.get(i)) && !userFilter.contains(inputDWIG.realReceiver.get(i))) {
+                    DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
 
-            } else {
-                DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
-                realSender.add(inputDWIG.realSender.get(i));
-                realReceiver.add(inputDWIG.realReceiver.get(i));
-                realTime.add(inputDWIG.realTime.get(i));
+                } else {
+                    DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                    realSender.add(inputDWIG.realSender.get(i));
+                    realReceiver.add(inputDWIG.realReceiver.get(i));
+                    realTime.add(inputDWIG.realTime.get(i));
+                }
             }
+        } finally {
+            checkRep();
         }
     }
 
     /**
+     * Gets all the users that has sent/received an Email
+     *
      * @return a Set of Integers, where every element in the set is a User ID
      * in this DWInteractionGraph.
      */
@@ -322,10 +339,12 @@ public class DWInteractionGraph {
     }
 
     /**
+     * Counts the Emails that has been sent from a user to another user
+     *
      * @param sender   the User ID of the sender in the email transaction.
      * @param receiver the User ID of the receiver in the email transaction.
      * @return the number of emails sent from the specified sender to the specified
-     * receiver in this DWInteractionGraph.
+     *         receiver in this DWInteractionGraph.
      */
     public int getEmailCount(int sender, int receiver) {
 
