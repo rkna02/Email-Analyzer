@@ -433,44 +433,6 @@ public class DWInteractionGraph {
         return -1;
     }
 
-//        int totalnodes = size.size();                              //number of nodes in the graph
-//        LinkedList<Integer> adj[];
-//        Queue<Integer> queue = new LinkedList<Integer>();
-//
-//        boolean nodes[] = new boolean[totalnodes];       //Holds true and false
-//        int b = 0;
-//
-//        nodes[user1]=true;
-//        queue.add(user1);
-//        int top = user1;
-//
-//        int i = 0;
-//
-//            while (queue.size() != 0)
-//            {
-//                top = queue.poll();
-//
-//                if (top != user2) {
-//                    BFS.add(top);   //Add top to the path list
-//                }
-//
-//                else {
-//                    break;
-//                }
-//
-//                for (int j = 0; j < adj[user1].size(); j++)  //goes through the linked list and pushes neighbouring nodes to the queue
-//                {
-//                    b = adj[user1].get(i);
-//                    if (!nodes[b])                    //inserts nodes which have not been accessed
-//                    {
-//                        nodes[b] = true;
-//                        queue.add(b);
-//                    }
-//                }
-//            }
-//        return BFS;
-//    }
-
     /**
      * performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
