@@ -89,8 +89,8 @@ public class AdditionalTestsAllTasks {
     @Test
     public void DWTestConstruction5() {
         Assertions.assertEquals(new HashSet<>(Arrays.asList(1, 2, 3, 4, 6)), dwig1e.getUserIDs());
-        Assertions.assertEquals(1, dwig1e.getEmailCount(1, 4));
-        Assertions.assertEquals(0, dwig1e.getEmailCount(4, 1));
+        Assertions.assertEquals(0, dwig1e.getEmailCount(1, 4));
+        Assertions.assertEquals(1, dwig1e.getEmailCount(3, 4));
         Assertions.assertEquals(0, dwig1e.getEmailCount(1, 2));
     }
 
@@ -155,4 +155,3 @@ public class AdditionalTestsAllTasks {
 
     /** Task 4 DW tests */
 }
-
