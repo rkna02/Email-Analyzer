@@ -517,57 +517,57 @@ public class DWInteractionGraph {
      */
     public List<Integer> BFS(int userID1, int userID2) {
 //        // TODO: Implement this method
-//        int user1 = userID1;
-//        int user2 = userID2;
-//
-//        Set<Integer> size = new HashSet<>();
-//        for (Integer integer : realSender) {
-//            size.add(integer);
-//        }
-//        for (Integer integer1 : realReceiver) {
-//            size.add(integer1);
-//        }
-//        int max = Collections.max(size);
-//
-//        Set<Integer> IDs = getUserIDs();
-//
-//        if (!IDs.contains(user1) || !IDs.contains(user2)) {
-//            return null;
-//        }
-//        // int sizeOfV = size.size();
-//        List<Integer> BFS = new ArrayList<>();
-//
-//        int[][] Dgraph = DWInteractions;
-//        int[] visited = new int[max + 1];
-//
-//        //Creates a queue list
-//        Queue<Integer> queue = new LinkedList<>();
-//        queue.add(user1);
-//        visited[user1] = 1;
-//
-//        while(!queue.isEmpty()){
-//            int presentNode = queue.poll();
-//            BFS.add(presentNode);
-//            int nextNode;
-//
-//            //Add all unvisited nodes to the queue
-//            while(((nextNode = neighbourNodes(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
-//                visited[nextNode] = 1;
-//                queue.add(nextNode);
-//            }
-//
-//
-//            //If the node we are currently at is user2, then add remaining items on queue and user2 to the path list
-//            if (nextNode == user2) {
-//                while(!queue.isEmpty()){
-//                    BFS.add(queue.poll());
-//                }
-//                queue.add(user2);
-//                BFS.add(queue.poll());
-//            }
-//        }
-//        return BFS;
-        return null;
+        int user1 = userID1;
+        int user2 = userID2;
+
+        Set<Integer> size = new HashSet<>();
+        for (Integer integer : realSender) {
+            size.add(integer);
+        }
+        for (Integer integer1 : realReceiver) {
+            size.add(integer1);
+        }
+        int max = Collections.max(size);
+
+        Set<Integer> IDs = getUserIDs();
+
+        if (!IDs.contains(user1) || !IDs.contains(user2)) {
+            return null;
+        }
+        // int sizeOfV = size.size();
+        List<Integer> BFS = new ArrayList<>();
+
+        int[][] Dgraph = array1;
+        int[] visited = new int[max + 1];
+
+        //Creates a queue list
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(user1);
+        visited[user1] = 1;
+
+        while(!queue.isEmpty()){
+            int presentNode = queue.poll();
+            BFS.add(presentNode);
+            int nextNode;
+
+            //Add all unvisited nodes to the queue
+            while(((nextNode = neighbourNodes(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
+                visited[nextNode] = 1;
+                queue.add(nextNode);
+            }
+
+
+            //If the node we are currently at is user2, then add remaining items on queue and user2 to the path list
+            if (nextNode == user2) {
+                while(!queue.isEmpty()){
+                    BFS.add(queue.poll());
+                }
+                queue.add(user2);
+                BFS.add(queue.poll());
+            }
+        }
+        return BFS;
+
     }
 
     /**
@@ -631,7 +631,17 @@ public class DWInteractionGraph {
         return null;
     }
 
-    // v is number of vertices
+
+
+    /**
+     * helper method as an intermediate step of DFS algorithm
+     * set up the node visit history array
+     *
+     * @param start means userId1
+     * @param S is number of vertices+1
+     * @param userID2 destination that we are hunting down
+     * @param theList the order of DFS
+     */
     void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
         int[][] array2 = new int[array1.length][array1.length];
@@ -640,6 +650,13 @@ public class DWInteractionGraph {
         DFSUtil(start, visited, userID2, theList);
     }
 
+    /**
+     *  DFS algorithm, stops when it finish searching its possibilities
+     * @param v the current node
+     * @param visited the array of nodes that are visited or not
+     * @param userID2 the destination node
+     * @param theList the list of order of the visit
+     */
     void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList) {
         // mark the current node as visited
         // and add the node to the return list
@@ -656,7 +673,6 @@ public class DWInteractionGraph {
             }
         }
     }
-
 
 
     /* ------- Task 4 ------- */

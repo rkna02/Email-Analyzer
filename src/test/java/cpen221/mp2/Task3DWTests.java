@@ -59,8 +59,14 @@ public class Task3DWTests {
 
     @Test
     public void testDFSGraph2_2() {
-        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2);
+
         Assertions.assertEquals(null, dwig2.DFS(2,8));
     }
+    @Test
+    public void testBFSGraph2_2() {
+
+        Assertions.assertEquals(null, dwig2.BFS(2,8));
+    }
+
 
 }
