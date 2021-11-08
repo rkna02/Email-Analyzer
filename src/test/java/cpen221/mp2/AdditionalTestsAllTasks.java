@@ -369,7 +369,41 @@ public class AdditionalTestsAllTasks {
         Assertions.assertEquals(0, udwig1f.getEmailCount(1, 6));
     }
 
+    
     /** Task 3 DW tests */
+    @Test
+    public void testBFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.BFS(1, 8));
+    }
+
+    @Test
+    public void testDFSInvalidUserID() {
+        Assertions.assertEquals(null, dwig1a.DFS(1, 8));
+    }
+
+    @Test
+    public void testBFSSameUser() {
+        List<Integer> expected = Arrays.asList(2);
+        Assertions.assertEquals(expected, dwig2a.BFS(2, 2));
+    }
+
+    @Test
+    public void testDFSSameUser() {
+        List<Integer> expected = Arrays.asList(3);
+        Assertions.assertEquals(expected, dwig2a.DFS(3, 3));
+    }
+
+    @Test
+    public void testBFSGraph2() {
+        List<Integer> expected = Arrays.asList(1, 3, 5, 6, 4, 8, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.BFS(1, 10));
+    }
+
+    @Test
+    public void testDFSGraph2() {
+        List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
+        Assertions.assertEquals(expected, dwig2a.DFS(1, 10));
+    }
 
     /** Task 3 UDW tests */
 
