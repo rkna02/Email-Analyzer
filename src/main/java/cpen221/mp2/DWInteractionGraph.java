@@ -17,12 +17,12 @@ public class DWInteractionGraph {
     /*
     RI: array1 cannot be greater than the size of all the vertices,
         and it only contains zero and one.
-    AF: A 2d to represent adajacency matrix
+    AF: A 2d to represent adjacency matrix
      */
-    //private int emailCount; // count of email sent from specified sender to specified receiver]
+    //private int emailCount; // count of email sent from specified sender to specified receiver
     //private Set<Integer> idSet ; // the ID Set of a graph
 
-    private int[][] array1; // adajency matrix
+    private int[][] array1; // adjacency matrix
     private List<Integer> realSender;
     private List<Integer> realReceiver;
     private List<Integer> realTime;
@@ -326,7 +326,27 @@ public class DWInteractionGraph {
 
     public int[] ReportActivityInTimeWindow(int[] timeWindow) {
         // TODO: Implement this method
-        return null;
+
+        Set<Integer> senderSet = new HashSet<>();
+        Set<Integer> receiverSet = new HashSet<>();
+        List<Integer> timeList = new ArrayList<>();
+
+        int[] reportNum = new int[3];
+
+        for (int i = 0; i < realTime.size(); i++) {
+            if (realTime.get(i) >= timeWindow[0] && realTime.get(i) <= timeWindow[1]) {
+                if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
+                    senderSet.add(realSender.get(i));
+                    receiverSet.add((realReceiver.get(i)));
+                    timeList.add(realTime.get(i));
+                }
+            }
+        }
+        reportNum[0] = senderSet.size();
+        reportNum[1] = receiverSet.size();
+        reportNum[2] = timeList.size();
+
+        return reportNum;
     }
 
     /**
@@ -341,7 +361,34 @@ public class DWInteractionGraph {
      */
     public int[] ReportOnUser(int userID) {
         // TODO: Implement this method
-        return null;
+        int[] theOne = new int[3];
+
+        List<Integer> unique = new ArrayList<>();
+        int count1 = 0;
+        int count2 = 0;
+
+        for (int i = 0; i < realSender.size(); i++) {
+            //making sure it's not filtered out by dwig 1 or dwig 2
+            if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
+                if (realSender.get(i) == userID) {
+                    count1++;
+                    unique.add(realReceiver.get(i));
+                }
+                if (realReceiver.get(i) == userID) {
+                    count2++;
+                    unique.add(realSender.get(i));
+                }
+            }
+        }
+
+        Collections.sort(unique);
+        Set<Integer> copy = new HashSet<>(unique);
+
+        theOne[0] = count1;
+        theOne[1] = count2;
+        theOne[2] = copy.size();
+
+        return theOne;
     }
 
     /**
@@ -352,9 +399,101 @@ public class DWInteractionGraph {
      * Sorts User IDs by their number of sent or received emails first. In the case of a
      * tie, secondarily sorts the tied User IDs in ascending order.
      */
+
     public int NthMostActiveUser(int N, SendOrReceive interactionType) {
-        // TODO: Implement this method
-        return -1;
+        //Convert the set of userIds to an array for accessing inner elements
+        Integer[] userIdsArray = new Integer[getUserIDs().size()];
+        getUserIDs().toArray(userIdsArray);
+
+        List<Integer> userIdsList = new ArrayList<>();
+        List<List<Integer>> userRanks = new ArrayList<>();
+
+        if (interactionType == SendOrReceive.SEND) {
+            int mostSentEmails = 0;
+            int nextMostSentEmails = 0;
+            int rankedUsers = 0;
+
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realSender.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
+                }
+            }
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[0] > mostSentEmails) {
+                    mostSentEmails = ReportOnUser(userIdsList.get(i))[0];
+                }
+            }
+
+            //Create a List of Lists with user rankings at every Nth rank
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] == mostSentEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.add(NthRankUsers);
+
+                //Update mostInteractions
+                nextMostSentEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[0] < mostSentEmails &&
+                            ReportOnUser(userIdsList.get(i))[0] > nextMostSentEmails) {
+                        nextMostSentEmails = ReportOnUser(userIdsList.get(i))[0];
+                    }
+                }
+                mostSentEmails = nextMostSentEmails;
+            }
+
+        } else if (interactionType == SendOrReceive.RECEIVE) {
+            int mostReceivedEmails = 0;
+            int nextMostReceivedEmails = 0;
+            int rankedUsers = 0;
+
+            for (int i = 0; i < userIdsArray.length; i++) {
+                if (realReceiver.contains(userIdsArray[i])) {
+                    userIdsList.add(userIdsArray[i]);
+                }
+            }
+            //Find the mostInteractions done by a user
+            for (int i = 0; i < userIdsList.size(); i++) {
+                if (ReportOnUser(userIdsList.get(i))[1] > mostReceivedEmails) {
+                    mostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                }
+            }
+            while (rankedUsers < userIdsList.size()) {
+                List<Integer> NthRankUsers = new ArrayList<>();
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] == mostReceivedEmails) {
+                        NthRankUsers.add(userIdsList.get(i));
+                        rankedUsers++;
+                    }
+                }
+                Collections.sort(NthRankUsers);
+                userRanks.add(NthRankUsers);
+
+                //Update mostInteractions
+                nextMostReceivedEmails = 0;
+                for (int i = 0; i < userIdsList.size(); i++) {
+                    if (ReportOnUser(userIdsList.get(i))[1] < mostReceivedEmails &&
+                            ReportOnUser(userIdsList.get(i))[1] > nextMostReceivedEmails) {
+                        nextMostReceivedEmails = ReportOnUser(userIdsList.get(i))[1];
+                    }
+                }
+                mostReceivedEmails = nextMostReceivedEmails;
+            }
+        }
+
+        if (N > userRanks.size()) {
+            return -1;
+        } else if (userRanks.get(N - 1).size() == 0){
+            return -1;
+        } else {
+            return userRanks.get(N - 1).get(0);
+        }
     }
 
     /* ------- Task 3 ------- */
@@ -393,7 +532,7 @@ public class DWInteractionGraph {
         int[][] Dgraph = array1;
         int[] visited = new int[max + 1];
 
-
+        //Creates a queue list
         Queue<Integer> queue = new LinkedList<>();
         queue.add(user1);
         visited[user1] = 1;
@@ -403,17 +542,19 @@ public class DWInteractionGraph {
             BFS.add(presentNode);
             int nextNode;
 
-            //Visit and add all unvisited neighbors to the queue
+            //Add all unvisited nodes to the queue
             while(((nextNode = neighbourNodes(presentNode, Dgraph, visited, user2)) != -1) && (nextNode != user2)){
                 visited[nextNode] = 1;
                 queue.add(nextNode);
             }
 
+
+            //If the node we are currently at is user2, then add remaining items on queue and user2 to the path list
             if (nextNode == user2) {
                 while(!queue.isEmpty()){
                     BFS.add(queue.poll());
                 }
-               queue.add(user2);
+                queue.add(user2);
                 BFS.add(queue.poll());
             }
         }
@@ -430,6 +571,7 @@ public class DWInteractionGraph {
      * @return if a path exists, returns the index of an adjacent node
      */
     private int neighbourNodes(int presentNode, int graph [][], int visited[], int user2){
+        //Loops through all UserIds to see if there is an interaction
         for(int index = 0; index < graph.length; index++){
             if(visited[index] == 0 && graph[presentNode][index] == 1){
                 return index;
@@ -454,8 +596,89 @@ public class DWInteractionGraph {
      */
     public List<Integer> DFS(int userID1, int userID2) {
         // TODO: Implement this method
+        Set<Integer> size = new HashSet<>();
+        for (Integer integer : realSender) {
+            size.add(integer);
+        }
+        for (Integer integer1 : realReceiver) {
+            size.add(integer1);
+        }
+        int max = Collections.max(size);
+
+        Set<Integer> IDs = getUserIDs();
+
+        if (!IDs.contains(userID1) || !IDs.contains(userID2)) {
+            return null;
+        }
+        // int sizeOfV = size.size();
+        List<Integer> theList = new ArrayList<>();
+        theList.add(userID1);
+        DFS1(userID1, max + 1, userID2, theList);
+
+        if (theList.contains(userID2)) {
+            return theList;
+        }
+
         return null;
     }
+
+    // v is number of vertices
+    void DFS1(int start, int S, int userID2, List<Integer> theList) {
+        //S is num of vertices
+        boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
+        DFSUtil(start, visited, userID2, theList,  0);
+    }
+
+    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track) {
+        // mark the current node as visited
+        // and add the node to the return list
+        visited[v] = true;
+
+        //int track = 0;
+        for (int i = 0; i < array1.length; i++) {
+            if (array1[v][i] == 1) {
+
+                if (i == userID2) {
+                    track++;
+                    theList.add(i);
+
+
+                    break;
+                } else if (!visited[i]) {
+                    theList.add(i);
+                    DFSUtil(i, visited, userID2, theList,track);
+                    break;
+                }
+            }
+            // go to the previous one to check
+        }
+
+        if(track==0){
+            Boolean b = true;
+            for (Boolean bb : visited) {
+                if (bb == false) {
+                    b = bb;
+                }
+            }
+
+            int previous = 0;
+            // obtain the previous node
+            for (int j = 0; j < array1.length; j++) {
+                if (array1[j][v] == 1) {
+                    previous = j;
+                    break;
+                }
+            }
+            if (track == 0 && b == false) {
+                DFSUtil(previous, visited, userID2, theList,track);
+
+            } else {
+                System.out.println("end");
+            }
+        }
+    }
+
+
 
     /* ------- Task 4 ------- */
 
@@ -470,4 +693,5 @@ public class DWInteractionGraph {
         // TODO: Implement this method
         return 0;
     }
+
 }
