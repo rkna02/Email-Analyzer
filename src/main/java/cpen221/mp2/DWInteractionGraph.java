@@ -1,12 +1,8 @@
 package cpen221.mp2;
 
-import org.w3c.dom.Node;
-
-import javax.xml.stream.events.EndDocument;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.*;
 
 public class DWInteractionGraph {
@@ -17,21 +13,39 @@ public class DWInteractionGraph {
     /*
     RI: array1 cannot be greater than the size of all the vertices,
         and it only contains zero and one.
-    AF: A 2d to represent adjacency matrix
-     */
+
+    //Abstract Function:
+    //  Graph interactions represented by a 2D adjacency matrix:
+    //  2D array at DWInteractions[x][y] represents a matrix of users, where rows represent senders and
+    //  columns represent email receivers and DWInteractions[x][y] == 1 implies an interaction from x to y
+    //  Example:
+    //  2D array at DWInteractions[1][2] implies that user with ID '1' has emailed user with ID '2' (an interaction)
+    //
+    //  Graph interaction details of the users represented by three ArrayLists:
+    //  realSender.get(N) represents the Nth Email sender
+    //  allReceivers.get(N) represents the Nth Email receiver
+    //  realTime.get(N) represents the Nth Email send time (in seconds)
+    //  Example:
+    //  allSenders.get(3) represents the sender of the 3rd Email
+    //  allReceivers.get(5) represents the receiver of the 5th Email
+    //  allSendTimes.get(1) represents a send time of the 1st Email (in seconds)
+    //
+
     //private int emailCount; // count of email sent from specified sender to specified receiver
     //private Set<Integer> idSet ; // the ID Set of a graph
+    */
 
-    private int[][] array1; // adjacency matrix
+    private int[][] DWInteractions; // adjacency matrix
     private List<Integer> realSender;
     private List<Integer> realReceiver;
     private List<Integer> realTime;
+
 
     /**
      * Creates a new DWInteractionGraph using an email interaction file.
      * The email interaction file will be in the resources directory.
      *
-     * @param timeWindow an array of length 2 used to specify contraints
+     * @param timeWindow an array of length 2 used to specify constraints
      * @param fileName   the name of the file in the resources
      *                   directory containing email interactions
      */
@@ -73,17 +87,17 @@ public class DWInteractionGraph {
             largestId = largestReceiverId;
         }
 
-        array1 = new int[largestId + 1][largestId + 1];
+        DWInteractions = new int[largestId + 1][largestId + 1];
 
-        for (int i_1 = 0; i_1 < array1.length; i_1++) {
-            for (int j_1 = 0; j_1 < array1.length; j_1++) {
-                array1[i_1][j_1] = 0;
+        for (int i_1 = 0; i_1 < DWInteractions.length; i_1++) {
+            for (int j_1 = 0; j_1 < DWInteractions.length; j_1++) {
+                DWInteractions[i_1][j_1] = 0;
             }
         }
 
         int count = 0;
         for (Integer i : realSender) {
-            array1[i][realReceiver.get(count)] = 1;
+            DWInteractions[i][realReceiver.get(count)] = 1;
             count++;
         }
 
@@ -176,11 +190,11 @@ public class DWInteractionGraph {
             }
         }
 
-        this.array1 = new int[maxsize + 1][maxsize + 1];
+        this.DWInteractions = new int[maxsize + 1][maxsize + 1];
 
         int count = 0;
         for (Integer i : realSender) {
-            this.array1[realSender.get(count)][realReceiver.get(count)] = 1;
+            this.DWInteractions[realSender.get(count)][realReceiver.get(count)] = 1;
             count++;
         }
 
@@ -204,18 +218,18 @@ public class DWInteractionGraph {
         realReceiver = new ArrayList<>();
         realTime = new ArrayList<>();
 
-        int length = inputDWIG.array1.length;
+        int length = inputDWIG.DWInteractions.length;
 
-        this.array1 = new int[length + 1][length + 1];
+        this.DWInteractions = new int[length + 1][length + 1];
 
         for (int i = 0; i < inputDWIG.realTime.size(); i++) {
             if (inputDWIG.realTime.get(i) >= timeFilter[0] && inputDWIG.realTime.get(i) <= timeFilter[1]) {
-                this.array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
                 realSender.add(inputDWIG.realSender.get(i));
                 realReceiver.add(inputDWIG.realReceiver.get(i));
                 realTime.add(inputDWIG.realTime.get(i));
             } else {
-                this.array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+                this.DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
 
             }
         }
@@ -241,16 +255,16 @@ public class DWInteractionGraph {
         realReceiver = new ArrayList<>();
         realTime = new ArrayList<>();
 
-        int length = inputDWIG.array1.length;
+        int length = inputDWIG.DWInteractions.length;
 
-        this.array1 = new int[length + 1][length + 1];
+        this.DWInteractions = new int[length + 1][length + 1];
         for (int i = 0; i < inputDWIG.realTime.size(); i++) {
 
             if (!userFilter.contains(inputDWIG.realSender.get(i)) && !userFilter.contains(inputDWIG.realReceiver.get(i))) {
-                array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
+                DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 0;
 
             } else {
-                array1[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
+                DWInteractions[inputDWIG.realSender.get(i)][inputDWIG.realReceiver.get(i)] = 1;
                 realSender.add(inputDWIG.realSender.get(i));
                 realReceiver.add(inputDWIG.realReceiver.get(i));
                 realTime.add(inputDWIG.realTime.get(i));
@@ -270,9 +284,9 @@ public class DWInteractionGraph {
         // TODO: Implement this getter method
         Set<Integer> idSet = new HashSet<>();
 
-        for (int i = 0; i < array1.length; i++) {
-            for (int j = 0; j < array1.length; j++) {
-                if (array1[i][j] == 1) {
+        for (int i = 0; i < DWInteractions.length; i++) {
+            for (int j = 0; j < DWInteractions.length; j++) {
+                if (DWInteractions[i][j] == 1) {
                     idSet.add(i);
                     idSet.add(j);
                 }
@@ -335,7 +349,7 @@ public class DWInteractionGraph {
 
         for (int i = 0; i < realTime.size(); i++) {
             if (realTime.get(i) >= timeWindow[0] && realTime.get(i) <= timeWindow[1]) {
-                if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
+                if (DWInteractions[realSender.get(i)][realReceiver.get(i)] == 1) {
                     senderSet.add(realSender.get(i));
                     receiverSet.add((realReceiver.get(i)));
                     timeList.add(realTime.get(i));
@@ -369,7 +383,7 @@ public class DWInteractionGraph {
 
         for (int i = 0; i < realSender.size(); i++) {
             //making sure it's not filtered out by dwig 1 or dwig 2
-            if (array1[realSender.get(i)][realReceiver.get(i)] == 1) {
+            if (DWInteractions[realSender.get(i)][realReceiver.get(i)] == 1) {
                 if (realSender.get(i) == userID) {
                     count1++;
                     unique.add(realReceiver.get(i));
@@ -529,7 +543,7 @@ public class DWInteractionGraph {
         // int sizeOfV = size.size();
         List<Integer> BFS = new ArrayList<>();
 
-        int[][] Dgraph = array1;
+        int[][] Dgraph = DWInteractions;
         int[] visited = new int[max + 1];
 
         //Creates a queue list
@@ -635,8 +649,8 @@ public class DWInteractionGraph {
         visited[v] = true;
 
         //int track = 0;
-        for (int i = 0; i < array1.length; i++) {
-            if (array1[v][i] == 1) {
+        for (int i = 0; i < DWInteractions.length; i++) {
+            if (DWInteractions[v][i] == 1) {
 
                 if (i == userID2) {
                     track++;
@@ -663,8 +677,8 @@ public class DWInteractionGraph {
 
             int previous = 0;
             // obtain the previous node
-            for (int j = 0; j < array1.length; j++) {
-                if (array1[j][v] == 1) {
+            for (int j = 0; j < DWInteractions.length; j++) {
+                if (DWInteractions[j][v] == 1) {
                     previous = j;
                     break;
                 }
