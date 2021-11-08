@@ -44,6 +44,10 @@ public class DWInteractionGraph {
         List<Integer> time = new ArrayList<>(); // a list of time info
         StringBuilder Etext = new StringBuilder();
 
+        realSender = new ArrayList<>(sender);
+        realReceiver = new ArrayList<>(receiver);
+        realTime = new ArrayList<>(time);
+
         reader(fileName, Etext);
         helper(sender, receiver, time, Etext);
 
@@ -95,18 +99,18 @@ public class DWInteractionGraph {
     }
 
     private void helper(List sender, List receiver, List time, StringBuilder Etext) {
-        List<Integer> xx = new ArrayList<>();
+        List<Integer> copyOfTranscation = new ArrayList<>();
 
         String[] stuff = Etext.toString().split(" ");
 
         for (String word : stuff) {
             if (!word.equals("") && !word.equals(" "))
-                xx.add(Integer.parseInt(word));
+                copyOfTranscation.add(Integer.parseInt(word));
 
         }
 
         int count = 7;
-        for (Integer integer : xx) {
+        for (Integer integer : copyOfTranscation) {
             if (count == 7) {
                 sender.add(integer);
                 count = 3;
@@ -203,9 +207,6 @@ public class DWInteractionGraph {
             }
         }
 
-//        this.realSender = new ArrayList<>(inputDWIG.realSender);
-//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
-//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -240,9 +241,6 @@ public class DWInteractionGraph {
             }
         }
 
-//        this.realSender = new ArrayList<>(inputDWIG.realSender);
-//        this.realReceiver = new ArrayList<>(inputDWIG.realReceiver);
-//        this.realTime = new ArrayList<>(inputDWIG.realTime);
     }
 
     /**
@@ -475,16 +473,12 @@ public class DWInteractionGraph {
         SendOrReceive rr = SendOrReceive.SEND;
 
         // it's send
-
-
         if (rr == interactionType) {
             if (N > hmap.size() || N < 1) {
                 return -1;
             } else {
                 return great.get(N - 1);
             }
-
-
         } else {
             if (N > hmap2.size() || N < 1) {
                 return -1;
@@ -511,6 +505,8 @@ public class DWInteractionGraph {
         return null;
     }
 
+
+
     /**
      * performs depth first search on the DWInteractionGraph object
      * to check path between user with userID1 and user with userID2.
@@ -533,69 +529,109 @@ public class DWInteractionGraph {
         int max = Collections.max(size);
         // int sizeOfV = size.size();
         List<Integer> theList = new ArrayList<>();
-        theList.add(userID1);
-        DFS1(userID1, max + 1, userID2, theList);
 
-        if (theList.contains(userID2)) {
+        boolean visited1[] = new boolean[max];
+//        Boolean m =DD( visited1,userID1,userID2);
+
+//        if(m== true){
+            theList.add(userID1);
+            DFS1(userID1, max + 1, userID2, theList);
             return theList;
-        }
+//        }
 
-        return null;
+        //return null;
+
     }
+
+//    boolean DD( boolean[] visited1, int id1, int id2){
+//
+//        visited1[id1] = true;
+//
+//        for (int i = 0; i < array1.length; i++) {
+//            if (array1[id1][i] == 1) {
+//
+//                if (i == id2) {
+//                    //theList.add(i);
+//                    //array2[v][i]=1;
+//
+//                    return true;
+//                } else if (!visited1[i]) {
+//                    //theList.add(i);
+//                    //array2[v][i]=1;
+//                    DD( visited1, i, id2);
+//                    break;
+//                }
+//            }
+//        }
+//            return false;
+//    }
 
     // v is number of vertices
-    void DFS1(int start, int S, int userID2, List<Integer> theList) {
+    private void DFS1(int start, int S, int userID2, List<Integer> theList) {
         //S is num of vertices
         boolean visited[] = new boolean[S]; // mark every vertices to be unvisited
-        DFSUtil(start, visited, userID2, theList,  0);
+        int [][]array2 = new int[array1.length][array1.length];
+        DFSUtil(start, visited, userID2, theList,  0, array2);
     }
 
-    void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track) {
+    private void DFSUtil(int v, boolean[] visited, int userID2, List<Integer> theList, int track, int[][]array2) {
         // mark the current node as visited
         // and add the node to the return list
-        visited[v] = true;
-
-        //int track = 0;
-        for (int i = 0; i < array1.length; i++) {
-            if (array1[v][i] == 1) {
-
-                if (i == userID2) {
-                    track++;
-                    theList.add(i);
 
 
-                    break;
-                } else if (!visited[i]) {
-                    theList.add(i);
-                    DFSUtil(i, visited, userID2, theList,track);
-                    break;
-                }
-            }
-            // go to the previous one to check
-        }
-
-        if(track==0){
+        // below we know two must reach
+        if(!theList.contains(userID2)){
             Boolean b = true;
             for (Boolean bb : visited) {
                 if (bb == false) {
                     b = bb;
                 }
             }
+            if(b!=true){
+                visited[v] = true;
+                //int track = 0;
+                for (int i = 0; i < array1.length; i++) {
+                    if (array1[v][i] == 1) {
 
-            int previous = 0;
-            // obtain the previous node
-            for (int j = 0; j < array1.length; j++) {
-                if (array1[j][v] == 1) {
-                    previous = j;
-                    break;
+                        if (i == userID2) {
+                            track++;
+                            theList.add(i);
+                            array2[v][i]=1;
+                            break;
+                        } else if (!visited[i]) {
+                            theList.add(i);
+                            array2[v][i]=1;
+                            DFSUtil(i, visited, userID2, theList,track,array2);
+                            break;
+                        }
+                    }
+                    // go to the previous one to check
+                }
+
+                if(track==0){
+
+                    for (Boolean bb : visited) {
+                        if (bb == false) {
+                            b = bb;
+                        }
+                    }
+
+                    int previous = 0;
+                    // obtain the previous node
+                    for (int j = 0; j < array1.length; j++) {
+                        if (array2[j][v] == 1) {
+                            previous = j;
+                            break;
+                        }
+                    }
+                    if (track == 0 && b == false) {
+                        DFSUtil(previous, visited, userID2, theList,track, array2);
+                    } else {
+                        System.out.println("end");
+                    }
                 }
             }
-            if (track == 0 && b == false) {
-                DFSUtil(previous, visited, userID2, theList,track);
 
-            } else {
-                System.out.println("end");
-            }
         }
     }
 

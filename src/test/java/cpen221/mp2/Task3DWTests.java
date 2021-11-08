@@ -41,4 +41,26 @@ public class Task3DWTests {
         List<Integer> expected = Arrays.asList(1, 3, 4, 8, 5, 7, 2, 9, 10);
         Assertions.assertEquals(expected, dwig2.DFS(1, 10));
     }
+    @Test
+    public void testDFSGraph2_1() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2);
+        Assertions.assertEquals(expected, dwig2.DFS(3,2));
+    }
+    @Test
+    public void testDFSGraph2_3() {
+        List<Integer> expected = Arrays.asList(3);
+        Assertions.assertEquals(expected, dwig2.DFS(3,3));
+    }
+    @Test
+    public void testDFSGraph2_4() {
+        List<Integer> expected = Arrays.asList(3,1,5,4,7,2,9,10,6);
+        Assertions.assertEquals(expected, dwig2.DFS(3,6));
+    }
+
+    @Test
+    public void testDFSGraph2_2() {
+        List<Integer> expected = Arrays.asList(3, 1, 5, 4, 7, 2);
+        Assertions.assertEquals(null, dwig2.DFS(2,8));
+    }
+
 }
