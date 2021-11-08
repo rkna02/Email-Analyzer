@@ -23,12 +23,12 @@ public class DWInteractionGraph {
     //
     //  Graph interaction details of the users represented by three ArrayLists:
     //  realSender.get(N) represents the Nth Email sender
-    //  allReceivers.get(N) represents the Nth Email receiver
+    //  realReceiver.get(N) represents the Nth Email receiver
     //  realTime.get(N) represents the Nth Email send time (in seconds)
     //  Example:
-    //  allSenders.get(3) represents the sender of the 3rd Email
-    //  allReceivers.get(5) represents the receiver of the 5th Email
-    //  allSendTimes.get(1) represents a send time of the 1st Email (in seconds)
+    //  realSender.get(2) represents the sender of the 2nd Email
+    //  realReceiver.get(3) represents the receiver of the 3rd Email
+    //  realTime.get(1) represents a send time of the 1st Email (in seconds)
     //
 
     //private int emailCount; // count of email sent from specified sender to specified receiver
