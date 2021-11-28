@@ -4,7 +4,7 @@
 
 | Compilation | Timeout | Duration |
 |:-----------:|:-------:|:--------:|
-||NoNoNoNo|183.89|
+|YesYesYesYes|NoNoNoNo|183.89|
 
 ## Comments
 Good work. Per the rules for using the extension, your grade is capped at a B.
